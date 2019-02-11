@@ -1,6 +1,7 @@
 '''Module contains all classes and functions that are nececary to build a decision tree in python'''
+import pandas as pd
 
-DATASET_HEADERS = ["color", "diameter", "label"]
+DATASET_HEADERS = pd.read_csv('sample_dataset.csv').columns
 
 def is_numeric(value):
     return isinstance(value, int) or isinstance(value, float)
