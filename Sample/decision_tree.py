@@ -11,8 +11,8 @@ class Question:
         self.column = column
         self.value = value
 
-    def match(self, data):
-        val = data[self.column]
+    def match(self, row):
+        val = row[self.column]
         if is_numeric(val):
             return val >= self.value
         else: 
@@ -133,6 +133,19 @@ class Decision_Node:
         self.question = question
         self.true_branch = true_branch
         self.false_branch = false_branch
+
+    def check_row(self, row):
+        res = self.question.match(row)
+        if res:
+            if not isinstance(self.true_branch, Leaf):
+                self.true_branch.check_row(row)
+            else:
+                return self.true_branch.predictions
+        else:
+            if not isinstance(self.false_branch, Leaf):
+                self.false_branch.check_row(row)
+            else:
+                return self.false_branch.predictions
 
 def build_tree(rows):
     """Builds the tree.
