@@ -9,8 +9,10 @@ def main():
     dt.print_tree(tree)
     #print(data.values)
     print(data.values[15])
-    prediction = tree.check_row(data.values[15])
-    print(prediction)
+    prediction = tree.check_row(data.values[15]).keys()
+    
+    for key in prediction:
+        print(key)
 
 if __name__ == '__main__':
     main()
