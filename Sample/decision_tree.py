@@ -136,15 +136,22 @@ class Decision_Node:
 
     def check_row(self, row):
         res = self.question.match(row)
+
         if res:
+            print(True)
             if not isinstance(self.true_branch, Leaf):
-                self.true_branch.check_row(row)
+                #print(True)
+                return self.true_branch.check_row(row)
             else:
+                #print(False)
                 return self.true_branch.predictions
         else:
+            print(False)
             if not isinstance(self.false_branch, Leaf):
-                self.false_branch.check_row(row)
+                #print(True)
+                return self.false_branch.check_row(row)
             else:
+                #print(False)
                 return self.false_branch.predictions
 
 def build_tree(rows):
