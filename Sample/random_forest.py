@@ -3,6 +3,7 @@ import pandas as pd
 import random as rnd
 
 rows = pd.read_csv("sample_dataset.csv")
+DATASET_HEADERS = rows.columns
 
 class Forest:
     '''Class that represents the random forest. Contains an array of decision trees.'''
@@ -15,7 +16,20 @@ def build_forest(rows):
 
     Creates deciosion node classes and appentds
     them into an array defined int Forest class.'''
-    pass
+    btset = buil_bootstrapped_dataset(rows)
+    subset = get_subset(btset, [0,1])
+    tree = dt.build_tree(subset)
+    dt.print_tree(tree)
+
+def get_subset(rows, columns = []):
+    
+    sub_columns = []
+    for col in columns:
+        sub_columns.append(rows[[DATASET_HEADERS[col]]])
+    sub_columns.append(rows[[DATASET_HEADERS[-1]]])
+    subset = pd.concat(sub_columns, axis=1)
+
+    return subset
 
 def buil_bootstrapped_dataset(rows):
     '''Builds a bootstrapped dataset out of dateset passed as the parameter.

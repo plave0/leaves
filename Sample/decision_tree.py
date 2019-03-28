@@ -1,33 +1,27 @@
-'''Module contains all classes and functions that are nececary to build a decision tree in python'''
+'''Module contains 
+all classes and functions that are nececary to build a decision tree in python'''
 import pandas as pd
 
 DATASET_HEADERS = pd.read_csv('sample_dataset.csv').columns
 
 def is_numeric(value):
-    '''Returns True if the given value is a number, and False it is not.'''
-
     return isinstance(value, int) or isinstance(value, float)
 
 class Question:
-    '''This class represents a tree node.'''
-
     def __init__(self, column, value):
-        self.column = column # The column we are testing
-        self.value = value # The value we are testing
+        self.column = column
+        self.value = value
 
     def match(self, row):
-        '''Checks True if the question gives a correct answer,
-        and False if the question returns a wrong answer.'''
-
-        val = row[self.column] #Get the value from the column we are testing
-        if is_numeric(val): # Check if the value is a number
-            return val >= self.value # If it is, check if the questioned value is greater than the value we are testing  
+        val = row[self.column]
+        if is_numeric(val):
+            return val >= self.value
         else: 
-            return val == self.value # If it is not, check if the value is equal to the value we are testing
+            return val == self.value
 
     def __repr__(self):
-        '''This is just a helper method to print
-        the question in a readable format.'''
+        # This is just a helper method to print
+        # the question in a readable format.
         condition = "=="
         if is_numeric(self.value):
             condition = ">="
@@ -155,18 +149,14 @@ class Decision_Node:
             else:
                 return self.false_branch.predictions
 
-def build_tree(rows):
+
+def build_tree(rows_df):
     """Builds the tree.
 
     Rules of recursion: 1) Believe that it works. 2) Start by checking
     for the base case (no further information gain). 3) Prepare for
     giant stack traces.
     """
-    used_coluns = [] # Save the columns that have already been used
-    print(rows)
-
-    dataframe = pd.DataFrame(data = rows[1:,1:], index = rows[1:,0], columns = rows [0,1:])
-    print(dataframe)
 
     # Try partitioing the dataset on each of the unique attribute,
     # calculate the information gain,
