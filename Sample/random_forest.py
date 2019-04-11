@@ -16,20 +16,24 @@ def build_forest(rows):
 
     Creates deciosion node classes and appentds
     them into an array defined int Forest class.'''
-    btset = buil_bootstrapped_dataset(rows)
-    subset = get_subset(btset, [0,1])
-    tree = dt.build_tree(subset)
-    dt.print_tree(tree)
+    btset, out = buil_bootstrapped_dataset(rows)
+    subset = get_subset(btset, [0])
+    print(subset)
 
 def get_subset(rows, columns = []):
-    
-    sub_columns = []
-    for col in columns:
-        sub_columns.append(rows[[DATASET_HEADERS[col]]])
-    sub_columns.append(rows[[DATASET_HEADERS[-1]]])
-    subset = pd.concat(sub_columns, axis=1)
+    '''Get a subset of columns from a dataset.
 
-    return subset
+    Parameter columns represents an array of integers. 
+    This ints are indexes of columns in the original dataset
+    that will be put in the new subset.'''
+
+    sub_columns = [] #Empty array of columns
+    for col in columns: 
+        sub_columns.append(rows[[DATASET_HEADERS[col]]]) #Append defined columns to the sub_columns array
+    sub_columns.append(rows[[DATASET_HEADERS[-1]]]) #Append the label column to the sub_columns array
+    subset = pd.concat(sub_columns, axis=1) #Form a datafreme from all the extracted columns
+
+    return subset #Return the dataframe
 
 def buil_bootstrapped_dataset(rows):
     '''Builds a bootstrapped dataset out of dateset passed as the parameter.
