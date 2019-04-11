@@ -17,8 +17,9 @@ def build_forest(rows):
     Creates deciosion node classes and appentds
     them into an array defined int Forest class.'''
     btset, out = buil_bootstrapped_dataset(rows)
-    subset = get_subset(btset, [0])
-    print(subset)
+    subset = get_subset(btset, [0,1])
+    tree = dt.build_tree(subset)
+    dt.print_tree(tree)
 
 def get_subset(rows, columns = []):
     '''Get a subset of columns from a dataset.

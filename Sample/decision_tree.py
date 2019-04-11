@@ -39,21 +39,19 @@ def class_counts(data):
         counts[label] += 1
     return counts
 
-def partition(data, question):
+def partition(rows, question):
     """Partitions a dataset.
 
     For each row in the dataset, check if it matches the question. If
     so, add it to 'true rows', otherwise, add it to 'false rows'.
     """
-    true_rows, false_rawns = [], []
-
-    for row in data:
-        if(question.match(row)):
+    true_rows, false_rows = [], []
+    for row in rows:
+        if question.match(row):
             true_rows.append(row)
         else:
-            false_rawns.append(row)
-
-    return true_rows, false_rawns
+            false_rows.append(row)
+    return true_rows, false_rows
 
 def gini(data):
     '''Calculate the Gini Impurity for a list of rows.'''
@@ -80,7 +78,12 @@ def find_best_split(rows):
     best_gain = 0  # keep track of the best information gain
     best_question = None  # keep train of the feature / value that produced it
     current_uncertainty = gini(rows)
-    n_features = len(rows[0]) - 1  # number of columns
+    if isinstance(rows, pd.DataFrame):
+        n_features = len(rows.columns) -1
+        print(rows.columns)
+    elif isinstance(rows, list):
+        n_features = len(rows[0]) - 1   # number of columns
+        print(rows)
 
     for col in range(n_features):  # for each feature
 
@@ -150,14 +153,13 @@ class Decision_Node:
                 return self.false_branch.predictions
 
 
-def build_tree(rows_df):
+def build_tree(rows):
     """Builds the tree.
-
     Rules of recursion: 1) Believe that it works. 2) Start by checking
     for the base case (no further information gain). 3) Prepare for
     giant stack traces.
     """
-
+    
     # Try partitioing the dataset on each of the unique attribute,
     # calculate the information gain,
     # and return the question that produces the highest gain.
@@ -183,7 +185,7 @@ def build_tree(rows_df):
     # This records the best feature / value to ask at this point,
     # as well as the branches to follow
     # dependingo on the answer.
-    return Decision_Node(question, true_branch, false_branch) 
+    return Decision_Node(question, true_branch, false_branch)
 
 
 def print_tree(node, spacing=" "):
