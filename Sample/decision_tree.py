@@ -138,7 +138,6 @@ class Decision_Node:
         self.true_branch = true_branch
         self.false_branch = false_branch
 
-<<<<<<< HEAD
     def check_row(self, row):
         res = self.question.match(row)
 
@@ -154,8 +153,6 @@ class Decision_Node:
                 return self.false_branch.predictions
 
 
-=======
->>>>>>> parent of ff766b8... [edit] decision_tree.py
 def build_tree(rows):
     """Builds the tree.
     Rules of recursion: 1) Believe that it works. 2) Start by checking
