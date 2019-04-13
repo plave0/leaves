@@ -5,7 +5,7 @@ import pandas as pd
 def main():
     '''Main program funcion'''
     data = pd.read_csv('sample_dataset.csv')
-    tree = dt.build_tree(data)
+    rf.build_forest(data)
 
 
 if __name__ == '__main__':

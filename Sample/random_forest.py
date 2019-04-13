@@ -2,8 +2,7 @@ import decision_tree as dt
 import pandas as pd
 import random as rnd
 
-rows = pd.read_csv("sample_dataset.csv")
-DATASET_HEADERS = rows.columns
+DATASET_HEADERS = pd.read_csv('sample_dataset.csv').columns
 
 class Forest:
     '''Class that represents the random forest. Contains an array of decision trees.'''
@@ -18,7 +17,7 @@ def build_forest(rows):
     them into an array defined int Forest class.'''
     btset, out = buil_bootstrapped_dataset(rows)
     subset = get_subset(btset, [0,1])
-    tree = dt.build_tree(subset)
+    tree = dt.build_tree(subset.values)
     dt.print_tree(tree)
 
 def get_subset(rows, columns = []):

@@ -78,12 +78,7 @@ def find_best_split(rows):
     best_gain = 0  # keep track of the best information gain
     best_question = None  # keep train of the feature / value that produced it
     current_uncertainty = gini(rows)
-    if isinstance(rows, pd.DataFrame):
-        n_features = len(rows.columns) -1
-        print(rows.columns)
-    elif isinstance(rows, list):
-        n_features = len(rows[0]) - 1   # number of columns
-        print(rows)
+    n_features = len(rows[0]) - 1   # number of columns
 
     for col in range(n_features):  # for each feature
 
