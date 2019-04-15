@@ -7,6 +7,5 @@ def main():
     data = pd.read_csv('sample_dataset.csv')
     rf.build_forest(data)
 
-
 if __name__ == '__main__':
     main()

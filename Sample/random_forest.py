@@ -11,23 +11,13 @@ class Forest:
         self.trees = []
 
 def generate_combinations(len, set_range):
-    ''' Generates all posible number combinations af a given length and a given range.
+    ''' Generates all posible number combinations of a given length and a given range.
 
     The paramer len defines the length of the generated arrays, 
     and the parameter range defines the maximum posible number that can appear in the arrays.'''
     
     combinations = itertools.combinations(range(set_range+1), len) #Generate combinations
     return combinations #Retuns all combinations
-
-def build_forest(rows):
-    '''Builds the forest. 
-
-    Creates deciosion node classes and appentds
-    them into an array defined int Forest class.'''
-    btset, out = buil_bootstrapped_dataset(rows)
-    subset = get_subset(btset, [0,1])
-    tree = dt.build_tree(subset.values)
-    dt.print_tree(tree)
 
 def get_subset(rows, columns = []):
     '''Get a subset of columns from a dataset.
@@ -70,3 +60,18 @@ def buil_bootstrapped_dataset(rows):
     df_out_of_bag = pd.DataFrame.from_dict(out_of_bag_samples, orient='index') # Converts dict to pd.DataFrame
 
     return df_bootstrapped, df_out_of_bag # Return the new datasets
+
+def build_forest(rows):
+    '''Builds the forest. 
+
+    Creates deciosion node classes and appentds
+    them into an array defined int Forest class.'''
+    forest = Forest() #Create an instance of a Forest
+    btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
+    combinations = generate_combinations(2, 3) #Create all posible combinations of numbers(rows)
+    for comb in combinations: #For each cobination of columns
+        subset = get_subset(btset, comb) #Generate the subset of columns from bs dataset
+        tree = dt.build_tree(subset.values) #Build a decision tree form the subset
+        forest.trees.append(tree) #Append it to the Forest object
+
+    return forest #Return the Forest object
