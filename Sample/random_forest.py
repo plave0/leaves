@@ -1,6 +1,7 @@
 import decision_tree as dt
 import pandas as pd
 import random as rnd
+import itertools
 
 DATASET_HEADERS = pd.read_csv('sample_dataset.csv').columns
 
@@ -9,6 +10,14 @@ class Forest:
     def __init__(self):
         self.trees = []
 
+def generate_combinations(len, set_range):
+    ''' Generates all posible number combinations af a given length and a given range.
+
+    The paramer len defines the length of the generated arrays, 
+    and the parameter range defines the maximum posible number that can appear in the arrays.'''
+    
+    combinations = itertools.combinations(range(set_range+1), len) #Generate combinations
+    return combinations #Retuns all combinations
 
 def build_forest(rows):
     '''Builds the forest. 
