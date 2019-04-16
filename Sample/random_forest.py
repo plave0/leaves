@@ -10,6 +10,7 @@ class Forest:
     def __init__(self):
         self.trees = []
 
+
 def generate_combinations(len, set_range):
     ''' Generates all posible number combinations of a given length and a given range.
 
@@ -75,3 +76,9 @@ def build_forest(rows):
         forest.trees.append(tree) #Append it to the Forest object
 
     return forest #Return the Forest object
+
+def print_forest(forest:Forest):
+    '''Forest display'''
+    for tree in forest.trees:
+        dt.print_tree(tree)
+

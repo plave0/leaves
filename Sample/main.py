@@ -5,7 +5,8 @@ import pandas as pd
 def main():
     '''Main program funcion'''
     data = pd.read_csv('sample_dataset.csv')
-    rf.build_forest(data)
+    forest = rf.build_forest(data)
+    rf.print_forest(forest)
 
 if __name__ == '__main__':
     main()
