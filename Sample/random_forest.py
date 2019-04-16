@@ -2,6 +2,7 @@ import decision_tree as dt
 import pandas as pd
 import random as rnd
 import itertools
+from collections import Counter
 
 DATASET_HEADERS = pd.read_csv('sample_dataset.csv').columns
 
@@ -14,9 +15,13 @@ class Forest:
 
         predictions = []
         for tree in self.trees:
-            predictions.append(tree.check_row(row))
+            tree_prediction = tree.check_row(row).keys() 
+            for prediction in tree_prediction:
+                predictions.append(prediction)
 
-        return predictions
+        freq_counter=Counter(predictions)
+
+        return predictions, freq_counter.most_common(1)[0][0]
 
 
 def generate_combinations(len, set_range):

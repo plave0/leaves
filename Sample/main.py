@@ -3,7 +3,9 @@ import random_forest as rf
 import pandas as pd
 
 def main():
-    '''Main program funcion'''
+    '''Main program funcion
+    This is just a testing function'''
+    
     data = pd.read_csv('sample_dataset.csv')
     #print(data.values[1])
     forest = rf.build_forest(data)
