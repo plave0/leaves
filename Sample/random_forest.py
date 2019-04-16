@@ -10,6 +10,14 @@ class Forest:
     def __init__(self):
         self.trees = []
 
+    def check_row(self, row):
+
+        predictions = []
+        for tree in self.trees:
+            predictions.append(tree.check_row(row))
+
+        return predictions
+
 
 def generate_combinations(len, set_range):
     ''' Generates all posible number combinations of a given length and a given range.
@@ -69,7 +77,7 @@ def build_forest(rows):
     them into an array defined int Forest class.'''
     forest = Forest() #Create an instance of a Forest
     btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
-    combinations = generate_combinations(2, 3) #Create all posible combinations of numbers(rows)
+    combinations = generate_combinations(2, 2) #Create all posible combinations of numbers(rows)
     for comb in combinations: #For each cobination of columns
         subset = get_subset(btset, comb) #Generate the subset of columns from bs dataset
         tree = dt.build_tree(subset.values) #Build a decision tree form the subset
