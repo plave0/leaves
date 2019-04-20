@@ -1,10 +1,11 @@
-import decision_tree as dt
+import classification.decision_tree as dt
 import pandas as pd
 import random as rnd
 import itertools
 from collections import Counter
+import os.path
 
-DATASET_HEADERS = pd.read_csv('sample_dataset.csv').columns
+DATASET_HEADERS = pd.read_csv(os.path.abspath(os.path.join(os.path.pardir, 'petnica-leaves\\sample_dataset.csv'))).columns
 
 class Forest:
     '''Class that represents the random forest. Contains an array of decision trees.'''
@@ -12,8 +13,9 @@ class Forest:
         self.trees = []
 
     def check_row(self, row):
-    '''Classifies the given row.
-    Returns prediction.'''
+        '''Classifies the given row.
+        Returns predictions'''
+
         predictions = [] #Emty array of predicions
         for tree in self.trees: #Iterate through evry tree in the forest
             tree_prediction = tree.check_row(row).keys() #Get predictions (return more thad one prediction)
