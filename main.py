@@ -1,5 +1,5 @@
-import decision_tree as dt
-import random_forest as rf
+import classification.decision_tree as dt
+import classification.random_forest as rf
 import pandas as pd
 
 def main():

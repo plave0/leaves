@@ -12,16 +12,16 @@ class Forest:
         self.trees = []
 
     def check_row(self, row):
-
-        predictions = []
-        for tree in self.trees:
-            tree_prediction = tree.check_row(row).keys() 
+    '''Classifies the given row.
+    Returns prediction.'''
+        predictions = [] #Emty array of predicions
+        for tree in self.trees: #Iterate through evry tree in the forest
+            tree_prediction = tree.check_row(row).keys() #Get predictions (return more thad one prediction)
             for prediction in tree_prediction:
-                predictions.append(prediction)
+                predictions.append(prediction) #Separate the predictions and add them to the array
 
         freq_counter=Counter(predictions)
-
-        return predictions, freq_counter.most_common(1)[0][0]
+        return predictions, freq_counter.most_common(1)[0][0] #Returns the array of all predictions and the most frequent prediction
 
 
 def generate_combinations(len, set_range):
@@ -60,8 +60,10 @@ def buil_bootstrapped_dataset(rows):
 
     # Creating bootstrapped dateset
     for i in range(len(orig_dataset)):
-        rand_index = rnd.randint(0, len(rows.index)-1) #Chose a random int from 0 to the number of rows in the original dataset
-        bootdata[i] = orig_dataset[rand_index] #Takes a random row from the original dataset and places it into do bootstraped datset
+        #Chose a random int from 0 to the number of rows in the original dataset
+        rand_index = rnd.randint(0, len(rows.index)-1) 
+        #Takes a random row from the original dataset and places it into do bootstraped datset
+        bootdata[i] = orig_dataset[rand_index] 
 
     #Creating "out of bag dataset"
     index = 0 # Counts next dict key
