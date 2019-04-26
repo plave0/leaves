@@ -1,5 +1,6 @@
 import classification.decision_tree as dt
 import classification.random_forest as rf
+import fex
 import pandas as pd
 
 def main():
