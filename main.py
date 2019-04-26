@@ -8,7 +8,8 @@ def main():
     '''Main program funcion
     This is just a testing function'''
     img = cv2.imread('samples\\sample.jpg', 1)
-    fex.show_image(img, 'sample')
+    edge = fex.find_edge(img)
+    fex.show_image(edge, 'sample')
 
 if __name__ == '__main__':
     main()
