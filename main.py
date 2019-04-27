@@ -11,6 +11,8 @@ def main():
     #edge = fex.find_edge(img)
     thresh = fex.thresh(img)
     resized = fex.resize_image(thresh, 0.5)
+    print(fex.calc_area(thresh))
+    print(fex.calc_area(resized))
     fex.show_image(resized, 'sample')
 
 if __name__ == '__main__':

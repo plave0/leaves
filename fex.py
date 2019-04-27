@@ -8,8 +8,12 @@ def find_edge(image):
 
 def thresh(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    ret,thresh = cv2.threshold(gray,240,255,cv2.THRESH_BINARY)
+    ret,thresh = cv2.threshold(gray,240,255,cv2.THRESH_BINARY_INV)
     return thresh
+
+def calc_area(image):
+    return cv2.countNonZero(image)
+
 
 def resize_image(image, factor):
     height, width = image.shape[:2]
