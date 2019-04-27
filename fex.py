@@ -6,6 +6,11 @@ def find_edge(image):
     edge = cv2.Canny(image, 300, 480)
     return edge
 
+def thresh(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    ret,thresh = cv2.threshold(gray,240,255,cv2.THRESH_BINARY)
+    return thresh
+
 def resize_image(image, factor):
     height, width = image.shape[:2]
     resized = cv2.resize(image, (round(factor*width), round(factor*height)), interpolation = cv2.INTER_CUBIC)
