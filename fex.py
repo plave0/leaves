@@ -12,8 +12,12 @@ def thresh(image):
     return thresh
 
 def calc_area(image):
-    return cv2.countNonZero(image)
+    thresh = thresh(image)
+    return cv2.countNonZero(thresh)
 
+def calc_ciric(image):
+    edge = find_edge(image)
+    return cv2.countNonZero(edge)
 
 def resize_image(image, factor):
     height, width = image.shape[:2]
