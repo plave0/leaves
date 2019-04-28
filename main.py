@@ -7,13 +7,14 @@ import cv2
 def main():
     '''Main program funcion
     This is just a testing function'''
-    img = cv2.imread('samples\\sample.jpg', 1)
+    img = cv2.imread('samples\\sample_3.jpg', 1)
     #edge = fex.find_edge(img)
     thresh = fex.thresh(img)
-    resized = fex.resize_image(thresh, 0.5)
-    print(fex.calc_area(img))
-    print(fex.calc_ciric(img))
-    fex.show_image(resized, 'sample')
+    hull = fex.hull(img)
+    resized_thr = fex.resize_image(thresh, 0.5)
+    resized_hull = fex.resize_image(hull, 0.5)
+    fex.show_image(resized_thr, 'sample')
+    fex.show_image(resized_hull, 'sample')
 
 if __name__ == '__main__':
     main()
