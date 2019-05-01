@@ -2,27 +2,33 @@
 import cv2
 import numpy as np
 
+def morph_adjust(image):
+    '''Removes noise form the image, and returns the adjusted image.
+    Uses morphological transormations to reduce noise.'''
+    kernel = np.ones((5,5), np.uint8)
+    image = cv2.morphologyEx(image, cv2.MORPH_OPEN,kernel)
+    image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel) 
+    image = cv2.erode(image,kernel,iterations = 1)
+    return image
+
 def find_edge(image):
     '''Returns the edge of a leaf.'''
     edge = cv2.Canny(image, 300, 480)
     return edge
 
-def thresh(image):
+def find_thresh(image):
     '''Returns thresholded image.'''
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     ret,thresh = cv2.threshold(gray,230,255,cv2.THRESH_BINARY_INV)
+    thresh = morph_adjust(thresh)
     return thresh
 
-def calc_area(image):
-    '''Returns the area of a leaf.'''
-    bw = thresh(image)
-    return cv2.countNonZero(bw)
-
-def hull(image):
+def find_hull(image):
     '''Returns image of the convex hull.'''
-    thr = thresh(image)
+    thr = find_thresh(image)
     edge = find_edge(thr)
     cnt,_ = cv2.findContours(edge, 1, 2)
+
     new_img = np.zeros((edge.shape[0], edge.shape[1], 3), dtype = np.uint8) #Create a blank image (array of zeros)
     color = (256,256,256) #Define color for drawing the hulls
     hull_list = [] #Empty hull list
