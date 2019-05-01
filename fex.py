@@ -55,6 +55,14 @@ def find_rect(image):
     cv2.drawContours(image, [box], 0, (0,0,256), 2)
     return image
 
+def find_encl(image):
+    _, hull = find_hull(image)
+    (x,y),radius = cv2.minEnclosingCircle(hull)
+    center = (int(x),int(y))
+    radius = int(radius)
+    cv2.circle(image,center,radius,(0,255,0),2)
+    return image
+
 def calc_area(image):
     '''Returns the area of a leaf.'''
     bw = thresh(image)
