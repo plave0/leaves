@@ -43,7 +43,22 @@ def find_hull(image):
             max_len_index = i
 
     cv2.drawContours(new_img, hull_list, max_len_index, color) #Draw the longest hull to the blank image
-    return new_img #Return the image
+    return new_img, hull_list[max_len_index] #Return the image
+
+def find_rect(image):
+    '''Finds the smallest bounding rectangle of a leaf.'''
+    _, hull = find_hull(image)
+
+    rect = cv2.minAreaRect(hull)
+    box = cv2.boxPoints(rect)
+    box = np.int0(box)
+    cv2.drawContours(image, [box], 0, (0,0,256), 2)
+    return image
+
+def calc_area(image):
+    '''Returns the area of a leaf.'''
+    bw = thresh(image)
+    return cv2.countNonZero(bw)
 
 def calc_ciric(image):
     '''Returns the circumference of the leaf.'''
