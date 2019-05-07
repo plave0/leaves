@@ -52,16 +52,24 @@ def find_rect(image):
     rect = cv2.minAreaRect(hull)
     box = cv2.boxPoints(rect)
     box = np.int0(box)
-    cv2.drawContours(image, [box], 0, (0,0,256), 2)
-    return image
+    new_img = np.ones((2000, 2000, 3), dtype=np.uint8)
+    cv2.drawContours(new_img, [box], 0, (0,0,256), 2)
+    #Returns the image of the rect and the cnt
+    return new_img, box
 
 def find_encl(image):
     _, hull = find_hull(image)
     (x,y),radius = cv2.minEnclosingCircle(hull)
     center = (int(x),int(y))
     radius = int(radius)
-    cv2.circle(image,center,radius,(0,255,0),2)
-    return image
+    new_img = np.ones((2000, 2000, 3), dtype=np.uint8)
+    cv2.circle(new_img,center,radius,(255,255,255),2)
+    edge = find_edge(new_img)
+    cnt,_ = cv2.findContours(edge, 1,2)
+    new_img = np.ones((2000, 2000, 3), dtype=np.uint8)
+    cv2.drawContours(new_img, [cnt[0]], 0, (0, 0, 256), 2)
+    #Returns the image of the circ and the cnt
+    return new_img, cnt
 
 def calc_area(image):
     '''Returns the area of a leaf.'''
