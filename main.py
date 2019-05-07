@@ -11,7 +11,7 @@ def main():
     #edge = fex.find_edge(img)
     thresh = fex.find_thresh(img)
     rect,_ = fex.find_rect(img)
-    circ = fex.find_encl(img)
+    circ,_ = fex.find_encl(img)
     resized_thr = fex.resize_image(thresh, 0.5)
     resized_rect = fex.resize_image(rect, 0.5)
     resized_circ = fex.resize_image(circ, 0.5)
