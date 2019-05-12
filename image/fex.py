@@ -23,13 +23,21 @@ def find_thresh(image):
     thresh = morph_adjust(thresh)
     return thresh
 
-def find_hull(image):
-    '''Returns image of the convex hull.'''
+def find_cnt(image):
     thr = find_thresh(image)
     edge = find_edge(thr)
     cnt,_ = cv2.findContours(edge, 1, 2)
 
-    new_img = np.zeros((edge.shape[0], edge.shape[1], 3), dtype = np.uint8) #Create a blank image (array of zeros)
+    new_img = np.zeros((edge.shape[0], edge.shape[1], 3), dtype = np.uint8)
+    cv2.drawContours(new_img, cnt, 0, (255, 255, 0))
+
+    return new_img, cnt
+
+def find_hull(image):
+    '''Returns image of the convex hull.'''
+    img, cnt = find_cnt(image)
+
+    new_img = np.zeros((img.shape[0], img.shape[1], 3), dtype = np.uint8) #Create a blank image (array of zeros)
     color = (256,256,256) #Define color for drawing the hulls
     hull_list = [] #Empty hull list
     for i in range(len(cnt)): #Append all hulls
@@ -64,8 +72,7 @@ def find_encl(image):
     radius = int(radius)
     new_img = np.ones((2000, 2000, 3), dtype=np.uint8)
     cv2.circle(new_img,center,radius,(255,255,255),2)
-    edge = find_edge(new_img)
-    cnt,_ = cv2.findContours(edge, 1,2)
+    _,cnt = find_cnt(new_img)
     new_img = np.ones((2000, 2000, 3), dtype=np.uint8)
     cv2.drawContours(new_img, [cnt[0]], 0, (0, 0, 256), 2)
     #Returns the image of the circ and the cnt
