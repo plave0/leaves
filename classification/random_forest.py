@@ -4,8 +4,9 @@ import random as rnd
 import itertools
 from collections import Counter
 import os.path
+from pathlib import Path
 
-DATASET_HEADERS = pd.read_csv(os.path.abspath(os.path.join(os.path.pardir, 'petnica-leaves\\samples\\sample_dataset.csv'))).columns
+DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute()).columns
 
 class Forest:
     '''Class that represents the random forest. Contains an array of decision trees.'''

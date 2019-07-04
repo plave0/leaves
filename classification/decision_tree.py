@@ -1,7 +1,8 @@
 import pandas as pd
 import os.path
+from pathlib import Path
 
-DATASET_HEADERS = pd.read_csv(os.path.abspath(os.path.join(os.path.pardir, 'petnica-leaves\\samples\\sample_dataset.csv'))).columns
+DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute()).columns
 
 def is_numeric(value):
     return isinstance(value, int) or isinstance(value, float)
