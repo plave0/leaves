@@ -9,11 +9,11 @@ from pathlib import Path
 def main():
     '''Main program funcion
     This is just a testing function'''
-    path = str(Path('samples/sample_2.jpg'))
+    path = str(Path('samples/sample_1.jpg'))
     img = cv2.imread(path, 1)
     #edge = fex.find_edge(img)
 
-    c.calc_rectangularity(img)
+    c.calc_circularity(img)
     
 
 if __name__ == '__main__':
