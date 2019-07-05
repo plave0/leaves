@@ -1,6 +1,7 @@
 import classification.decision_tree as dt
 import classification.random_forest as rf
-import image.fex as f
+import image_processing.fex as f
+import image_processing.calc as c
 import pandas as pd
 import cv2
 from pathlib import Path
@@ -11,9 +12,9 @@ def main():
     path = str(Path('samples/sample_2.jpg'))
     img = cv2.imread(path, 1)
     #edge = fex.find_edge(img)
-    cntimage, _ = f.find_encl(img)
-    resized = f.resize_image(cntimage, 0.5)
-    f.show_image(resized)
+
+    c.calc_rectangularity(img)
+    
 
 if __name__ == '__main__':
     main()

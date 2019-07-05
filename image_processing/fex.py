@@ -89,7 +89,6 @@ def find_rect(image):
 
     #Create new rectangle
     new_rect = ((x,y), rect[1], rect[2])
-    shape = list(new_rect[1])
     box = cv2.boxPoints(new_rect)
     box = np.int0(box)
 
@@ -107,7 +106,7 @@ def find_rect(image):
     cv2.drawContours(rect_img, [box], 0, color, 2)
 
     #Returns the image of the rectangle 
-    #and the rect object that contains all info about the rectangle (ceter, height, width, rotation)
+    #and the rect object that contains all info about the rectangle ((x,y), (height, width), rotation)
     return rect_img, rect
 
 def find_encl(image):
