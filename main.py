@@ -13,7 +13,7 @@ def main():
     img = cv2.imread(path, 1)
     #edge = fex.find_edge(img)
 
-    c.calc_circularity(img)
+    c.calc_leaf_circumference(img)
     
 
 if __name__ == '__main__':

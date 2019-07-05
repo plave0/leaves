@@ -1,6 +1,6 @@
 '''Calculations'''
 import image_processing.fex as f
-from cv2 import contourArea
+import cv2
 
 def calc_rectangularity(image):
     '''Calculates the rectangularity of a leaf.'''
@@ -25,7 +25,7 @@ def calc_circularity(image):
     img, circ = f.find_encl(image)
     res = f.resize_image(img, 0.3)
     f.show_image(res)
-    circ_area = contourArea(circ)
+    circ_area = cv2.contourArea(circ)
     print(circ_area)
 
     #Calculate leaf area
@@ -42,4 +42,12 @@ def calc_leaf_area(image):
     cnt_img, cnt = f.find_cnt(image)
     res = f.resize_image(cnt_img, 0.3)
     f.show_image(res)
-    return contourArea(cnt[0])
+    return cv2.contourArea(cnt[0])
+
+def calc_leaf_circumference(image):
+    '''Calculates leaf circumference.'''
+
+    cnt_img, _ = f.find_cnt(image)
+    gray_image = cv2.cvtColor(cnt_img, cv2.COLOR_BGR2GRAY)
+    circumference = cv2.countNonZero(gray_image)
+    print(circumference)
