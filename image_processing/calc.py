@@ -36,6 +36,15 @@ def calc_circularity(image):
     circularity = (leaf_area/circ_area) * 100
     print(circularity)
 
+def calc_hw_ratio(image):
+    '''Calculates height-width ratio of a leaf.'''
+
+    _,rect = f.find_rect(image)
+    height = rect[1][0]
+    width = rect[1][1]
+
+    print(height/width)
+
 def calc_leaf_area(image):
     '''Calculates leaf area.'''
 
