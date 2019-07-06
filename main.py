@@ -9,14 +9,11 @@ from pathlib import Path
 def main():
     '''Main program funcion
     This is just a testing function'''
-    path = str(Path('samples/sample_3.jpg'))
+    path = str(Path('samples/sample_2.jpg'))
     img = cv2.imread(path, 1)
-    #edge = fex.find_edge(img)
 
-    res = f.resize_image(img, 0.3)
-    f.show_image(res)
-    c.calc_hw_ratio(img)
-    
+    #print(c.calc_simetry(img))
+    c.calc_all(img)
 
 if __name__ == '__main__':
     main()
