@@ -71,6 +71,7 @@ def find_rect(image, keep_original=False):
     box = cv2.boxPoints(rect)
     box = np.int0(box)
     
+    #If the original image isn't kept
     if not keep_original:
         #Fing the x cordinate of the point with the lowest x cordinate
         #and the y cordinate of the point with the lowest y cordinate
@@ -107,11 +108,20 @@ def find_rect(image, keep_original=False):
         cv2.drawContours(rect_img, [box], 0, color, 2)
 
         #Returns the image of the rectangle 
-        #and the rect object that contains all info about the rectangle ((x,y), (height, width), rotation)
+        #and the rect object that contains all info about
+        #the rectangle ((x,y), (height, width), rotation)
+        #and the cordinates of all rectangle points
         return rect_img, rect, box
+    #If the original image is kept
     else:
+        #Draws contour
         color = (0, 0, 255)
         cv2.drawContours(image, [box], 0, color, 2)
+
+        #Returns the image of the rectangle 
+        #and the rect object that contains all info about
+        #the rectangle ((x,y), (height, width), rotation)
+        #and the cordinates of all rectangle points
         return image, rect, box
 
 def find_encl(image, keep_original=False):
@@ -125,6 +135,7 @@ def find_encl(image, keep_original=False):
     center = (int(x),int(y))
     radius = int(radius)
 
+    #If the original image is not kept
     if not keep_original:
         while x-radius < float(0):
             x+=50
@@ -141,15 +152,19 @@ def find_encl(image, keep_original=False):
         #Find circle contour
         _, hull = find_hull(new_img) 
 
-        #Returns the image of the circ and the cnt
+        #Returns the image of the circ, the cnt, and the circle parameter
         return new_img, hull, (center, radius)
+    #If the original image is kept
     else:
+        #Draw circle
         color = (255,255,255)
         new_img = np.ones(image.shape, dtype=np.uint8)
         cv2.circle(new_img,center,radius, color,-1)
 
+        #Find circle contour
         _, hull = find_hull(new_img) 
         
+        #Returns the image of the circ, the cnt, and the circle parameter
         return new_img, hull, (center, radius)
 
 def resize_image(image, factor):

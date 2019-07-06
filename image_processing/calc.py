@@ -41,11 +41,13 @@ def calc_circularity(image):
 def calc_hw_ratio(image):
     '''Calculates height-width ratio of a leaf.'''
 
+    #Calculates the height and the width
     _,rect, _ = f.find_rect(image)
     height = rect[1][0]
     width = rect[1][1]
 
-    print(height/width)
+    #Returns ratio
+    return height/width
 
 def calc_simetry(image):
     '''Calculates leaf simerty.'''
@@ -64,16 +66,7 @@ def calc_simetry(image):
         middle_point = [x,y]
         middle_points.append(middle_point)
     
-
-    rect, _, _ = f.find_rect(image, keep_original=True)
-    for point in middle_points:
-        point = tuple(point)
-        print(point)
-        cv2.circle(rect,point,10,(0,255,0),-1)
-
-    cv2.line(rect,tuple(middle_points[0]), tuple(middle_points[2]),(0,255,0),2)
-    cv2.line(rect,tuple(middle_points[1]), tuple(middle_points[3]),(0,255,0),2)
-
+    #Initiation
     segments = [] #Segments of leafs
     segment_areas = [] #Areas of leaf segments
     simetries  = [] #Simetries (rectangles) of leafs
@@ -98,99 +91,94 @@ def calc_simetry(image):
     #Calculate the simery
     tb_simetry = segment_areas[3]/segment_areas[2]
     rl_simetry = segment_areas[1]/segment_areas[0]
-    print(tb_simetry)
-    print(rl_simetry)
     simetry = tb_simetry*rl_simetry
-    print(simetry)
 
-    for seg in segments:
-        res = f.resize_image(seg,0.3)
-        f.show_image(res)
+    #Return simetry 
+    return simetry
 
 def calc_leaf_area(image):
     '''Calculates leaf area.'''
 
+    #Calculate and return leaf area
     cnt_img, cnt = f.find_cnt(image)
-    res = f.resize_image(cnt_img, 0.3)
-    f.show_image(res)
     return cv2.contourArea(cnt[0])
-
-def calc_leaf_circumference(image):
-    '''Calculates leaf circumference.'''
-
-    cnt_img, _ = f.find_cnt(image)
-    gray_image = cv2.cvtColor(cnt_img, cv2.COLOR_BGR2GRAY)
-    circumference = cv2.countNonZero(gray_image)
-    print(circumference)
 
 def calc_cc_ratio(image):
     '''Calculates ratio of enclosing circle
     and leaf circumferences.'''
 
+    #Calculates circumference of the enclosing circle
     encl_circ = calc_encl_circumference(image)
 
+    #Calculates leaf circumference
     cnt,_ = f.find_cnt(image)
     cnt = cv2.cvtColor(cnt, cv2.COLOR_RGB2GRAY)
     leaf_circ = cv2.countNonZero(cnt)
 
-    ratio = leaf_circ/encl_circ
-    print(ratio)
+    #Return ratio
+    return leaf_circ/encl_circ
 
 def calc_ca_ratio(image):
     '''Calculates the ration betwen the 
     circumference of the enclsing circle and the leaf's area.'''
 
+    #Calculates circumference of the enclosing circle
     encl_circ = calc_encl_circumference(image)
     
+    #Calculates leaf area
     _,cnt = f.find_cnt(image)
     area = cv2.contourArea(cnt[0])
-    ratio = area/encl_circ
 
-    print(ratio)
-    return ratio
+    #Returns ratio
+    return area/encl_circ
 
 def calc_ch_ratio(image):
     '''Calculates ratio betwen circumference of 
     eclosing circle ant the height of the leaf.'''
 
+    #Calculates circumference of the enclosing circle
     encl_circ = calc_encl_circumference(image)
 
+    #Calculates the height of the leaf
     _,rect,_= f.find_rect(image)
     height = rect[1][0]
-    print(height)
-    ratio = encl_circ/height
-    print(ratio)
-    return ratio
+    
+    #Returns the ratio
+    return encl_circ/height
 
 def calc_cw_ratio(image):
     '''Calculates ratio betwen circumference of 
     eclosing circle ant the width of the leaf.'''
 
+    #Calculates circumference of the enclosing circle
     encl_circ = calc_encl_circumference(image)
 
+    #Calculates the width of the leaf
     _,rect,_= f.find_rect(image)
     width = rect[1][1]
-    print(width)
-    ratio = encl_circ/width
-    print(ratio)
-    return ratio
+
+    #Return ratio
+    return encl_circ/width
 
 def calc_center_distance_ratio(image):
     '''Calculates the ratio between the circumference 
     of the enclosing circle and the distance between the centers
     of the enclosing circle and rectangel.'''
 
+    #Calculates circumference of the enclosing circle
     encl_circ = calc_encl_circumference(image)
 
+    #Calulate centers
     _,_,encl = f.find_encl(image,keep_original=True)
     _,_,rect = f.find_rect(image,keep_original=True)
     encl_center = encl[0]
     rect_center = rect[0]
 
+    #Calulate distance
     distance = sqrt(pow(encl_center[0]-rect_center[0],2)+pow(encl_center[1]-rect_center[1],2))
 
-    ratio = encl_circ/distance
-    print(ratio)
+    #Returns ratio
+    return encl_circ/distance
 
 def calc_encl_circumference(image):
     '''Calulates the circumference of the enclosing circle.'''
