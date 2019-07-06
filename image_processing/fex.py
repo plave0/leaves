@@ -114,7 +114,7 @@ def find_rect(image, keep_original=False):
         cv2.drawContours(image, [box], 0, color, 2)
         return image, rect, box
 
-def find_encl(image):
+def find_encl(image, keep_original=False):
     '''Finds the smallest enclosing circle of a leaf.'''
 
     #Find leaf convex hull
@@ -122,25 +122,36 @@ def find_encl(image):
 
     #Generate circle
     (x,y),radius = cv2.minEnclosingCircle(hull)
-    while x-radius < float(0):
-        x+=50
-    while y-radius < float(0):
-        y+=50
-    
     center = (int(x),int(y))
     radius = int(radius)
+
+    if not keep_original:
+        while x-radius < float(0):
+            x+=50
+        while y-radius < float(0):
+            y+=50
     
-    #Draw circle
-    color = (255,255,255)
-    img_size = (int(x + radius + 100), int(y + radius + 100), 3)
-    new_img = np.ones(img_size, dtype=np.uint8)
-    cv2.circle(new_img,center,radius, color,-1)
+        
+        #Draw circle
+        color = (255,255,255)
+        img_size = (int(x + radius + 100), int(y + radius + 100), 3)
+        new_img = np.ones(img_size, dtype=np.uint8)
+        cv2.circle(new_img,center,radius, color,-1)
 
-    #Find circle contour
-    _, hull = find_hull(new_img) 
+        #Find circle contour
+        _, hull = find_hull(new_img) 
 
-    #Returns the image of the circ and the cnt
-    return new_img, hull
+        #Returns the image of the circ and the cnt
+        return new_img, hull, (center, radius)
+    else:
+        color = (255,255,255)
+        new_img = np.ones(image.shape, dtype=np.uint8)
+        cv2.circle(new_img,center,radius, color,-1)
+
+        _, hull = find_hull(new_img) 
+        
+        return new_img, hull, (center, radius)
+
 
 def resize_image(image, factor):
     '''Returns the resized image.
