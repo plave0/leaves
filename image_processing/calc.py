@@ -123,7 +123,7 @@ def calc_leaf_circumference(image):
     circumference = cv2.countNonZero(gray_image)
     print(circumference)
 
-def calc_cc_ratios(image):
+def calc_cc_ratio(image):
     '''Calculates ratio of enclosing circle
     and leaf circumferences.'''
 
@@ -136,6 +136,18 @@ def calc_cc_ratios(image):
     ratio = leaf_circ/encl_circ
     print(ratio)
 
+def calc_ca_ratio(image):
+    '''Calculates the ration betwen the 
+    circumference of the enclsing circle and the leaf's area.'''
+
+    encl_circ = calc_encl_circumference(image)
+    
+    _,cnt = f.find_cnt(image)
+    area = cv2.contourArea(cnt[0])
+    ratio = area/encl_circ
+
+    print(ratio)
+    return ratio
 
 
 def calc_encl_circumference(image):
