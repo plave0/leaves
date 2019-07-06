@@ -1,12 +1,13 @@
 '''Calculations'''
 import image_processing.fex as f
 import cv2
+import numpy as np
 
 def calc_rectangularity(image):
     '''Calculates the rectangularity of a leaf.'''
 
     #Calculates enclosing rectangle area
-    _, rect = f.find_rect(image)
+    _, rect, _ = f.find_rect(image)
     rect_area = rect[1][0] * rect[1][1];
     print(rect_area)
 
@@ -39,11 +40,71 @@ def calc_circularity(image):
 def calc_hw_ratio(image):
     '''Calculates height-width ratio of a leaf.'''
 
-    _,rect = f.find_rect(image)
+    _,rect, _ = f.find_rect(image)
     height = rect[1][0]
     width = rect[1][1]
 
     print(height/width)
+
+def calc_simetry(image):
+    '''Calculates leaf simerty.'''
+
+    _, _, rect_points = f.find_rect(image, keep_original=True)
+    middle_points = [] #Array of points that represent the centers of all four sides of the rectangle
+
+    #Calculate middle poitns
+    for poin_index in range(len(rect_points)):
+        next_point_index = (poin_index + 1)%4
+        point1 = rect_points[poin_index]
+        point2 = rect_points[next_point_index]
+
+        x = int((point1[0]+point2[0])/2)
+        y = int((point1[1]+point2[1])/2)
+        middle_point = [x,y]
+        middle_points.append(middle_point)
+    
+
+    rect, _, _ = f.find_rect(image, keep_original=True)
+    for point in middle_points:
+        point = tuple(point)
+        print(point)
+        cv2.circle(rect,point,10,(0,255,0),-1)
+
+    cv2.line(rect,tuple(middle_points[0]), tuple(middle_points[2]),(0,255,0),2)
+    cv2.line(rect,tuple(middle_points[1]), tuple(middle_points[3]),(0,255,0),2)
+
+    segments = [] #Segments of leafs
+    segment_areas = [] #Areas of leaf segments
+    simetries  = [] #Simetries (rectangles) of leafs
+    thresh = f.find_thresh(image)
+
+    #Create al the simetries (right, left, bottom, top)
+    simetries.append(np.array([rect_points[0],middle_points[0],middle_points[2], rect_points[3]]))
+    simetries.append(np.array([middle_points[0],rect_points[1], rect_points[2],middle_points[2]]))
+    simetries.append(np.array([rect_points[0], rect_points[1],middle_points[1], middle_points[3]]))
+    simetries.append(np.array([middle_points[3], middle_points[1],rect_points[2], rect_points[3]]))
+
+    #Calculates the segments and the areas
+    for sim in simetries:
+        canvas = np.zeros((image.shape[0], image.shape[1], 1), dtype=np.uint8)
+        cv2.fillPoly(canvas, pts=[sim], color=(255,255,255))
+        segments.append(cv2.bitwise_and(thresh, canvas))
+        
+        area = cv2.countNonZero(canvas)
+        segment_areas.append(area)
+        print(area)
+
+    #Calculate the simery
+    tb_simetry = segment_areas[3]/segment_areas[2]
+    rl_simetry = segment_areas[1]/segment_areas[0]
+    print(tb_simetry)
+    print(rl_simetry)
+    simetry = tb_simetry*rl_simetry
+    print(simetry)
+
+    for seg in segments:
+        res = f.resize_image(seg,0.3)
+        f.show_image(res)
 
 def calc_leaf_area(image):
     '''Calculates leaf area.'''
