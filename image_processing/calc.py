@@ -2,6 +2,7 @@
 import image_processing.fex as f
 import cv2
 import numpy as np
+from math import sqrt
 
 def calc_rectangularity(image):
     '''Calculates the rectangularity of a leaf.'''
@@ -120,4 +121,9 @@ def calc_leaf_circumference(image):
     cnt_img, _ = f.find_cnt(image)
     gray_image = cv2.cvtColor(cnt_img, cv2.COLOR_BGR2GRAY)
     circumference = cv2.countNonZero(gray_image)
-    print(circumference)
+def calc_encl_circumference(image):
+    '''Calulates the circumference of the enclosing circle.'''
+
+    cnt,_ = f.find_cnt(image)
+    return cv2.countNonZero(cnt)
+
