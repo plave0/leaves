@@ -152,7 +152,6 @@ def find_encl(image, keep_original=False):
         
         return new_img, hull, (center, radius)
 
-
 def resize_image(image, factor):
     '''Returns the resized image.
     Parameter 'factor' represents the number with which the width and the height are multipied.'''

@@ -2,7 +2,7 @@
 import image_processing.fex as f
 import cv2
 import numpy as np
-from math import sqrt
+from math import sqrt,pow
 
 def calc_rectangularity(image):
     '''Calculates the rectangularity of a leaf.'''
@@ -149,13 +149,54 @@ def calc_ca_ratio(image):
     print(ratio)
     return ratio
 
+def calc_ch_ratio(image):
+    '''Calculates ratio betwen circumference of 
+    eclosing circle ant the height of the leaf.'''
+
+    encl_circ = calc_encl_circumference(image)
+
+    _,rect,_= f.find_rect(image)
+    height = rect[1][0]
+    print(height)
+    ratio = encl_circ/height
+    print(ratio)
+    return ratio
+
+def calc_cw_ratio(image):
+    '''Calculates ratio betwen circumference of 
+    eclosing circle ant the width of the leaf.'''
+
+    encl_circ = calc_encl_circumference(image)
+
+    _,rect,_= f.find_rect(image)
+    width = rect[1][1]
+    print(width)
+    ratio = encl_circ/width
+    print(ratio)
+    return ratio
+
+def calc_center_distance_ratio(image):
+    '''Calculates the ratio between the circumference 
+    of the enclosing circle and the distance between the centers
+    of the enclosing circle and rectangel.'''
+
+    encl_circ = calc_encl_circumference(image)
+
+    _,_,encl = f.find_encl(image,keep_original=True)
+    _,_,rect = f.find_rect(image,keep_original=True)
+    encl_center = encl[0]
+    rect_center = rect[0]
+
+    distance = sqrt(pow(encl_center[0]-rect_center[0],2)+pow(encl_center[1]-rect_center[1],2))
+
+    ratio = encl_circ/distance
+    print(ratio)
 
 def calc_encl_circumference(image):
     '''Calulates the circumference of the enclosing circle.'''
 
-    encl,_ = f.find_encl(image)
+    encl,_,_= f.find_encl(image)
     cnt,_=f.find_cnt(encl)
     cnt = cv2.cvtColor(cnt, cv2.COLOR_BGR2GRAY)
     circ = cv2.countNonZero(cnt)
     return circ
-
