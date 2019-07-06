@@ -59,7 +59,7 @@ def find_hull(image):
     cv2.drawContours(new_img, hull_list, max_len_index, color) #Draw the longest hull to the blank image
     return new_img, hull_list[max_len_index] #Return the image
 
-def find_rect(image):
+def find_rect(image, keep_original=False):
     '''Finds the smallest bounding rectangle of a leaf.'''
 
     #Find leaf convex hull
@@ -71,43 +71,48 @@ def find_rect(image):
     box = cv2.boxPoints(rect)
     box = np.int0(box)
     
-    #Fing the x cordinate of the point with the lowest x cordinate
-    #and the y cordinate of the point with the lowest y cordinate
-    min_x_point = box[0][0]
-    min_y_point = box[0][1]
-    for point in box:
-        if point[0] < min_x_point:
-            min_x_point = point[0]
-        if point[1] < min_y_point:
-            min_y_point = point[1]
+    if not keep_original:
+        #Fing the x cordinate of the point with the lowest x cordinate
+        #and the y cordinate of the point with the lowest y cordinate
+        min_x_point = box[0][0]
+        min_y_point = box[0][1]
+        for point in box:
+            if point[0] < min_x_point:
+                min_x_point = point[0]
+            if point[1] < min_y_point:
+                min_y_point = point[1]
 
-    #Move center so all point are positive
-    if min_x_point < 0:
-        x += (abs(min_x_point) + 50)
-    if min_y_point < 0:
-        y += (abs(min_y_point) + 50)
+        #Move center so all point are positive
+        if min_x_point < 0:
+            x += (abs(min_x_point) + 50)
+        if min_y_point < 0:
+            y += (abs(min_y_point) + 50)
 
-    #Create new rectangle
-    new_rect = ((x,y), rect[1], rect[2])
-    box = cv2.boxPoints(new_rect)
-    box = np.int0(box)
+        #Create new rectangle
+        new_rect = ((x,y), rect[1], rect[2])
+        box = cv2.boxPoints(new_rect)
+        box = np.int0(box)
 
-    #Draw rectangle
-    max_x_point = box[0][0]
-    max_y_point = box[0][1]
-    for point in box:
-        if point[0] > max_x_point:
-            max_x_point = point[0]
-        if point[1] > max_y_point:
-            max_y_point = point[1]
-    color = (0, 0, 255)
-    img_size = (int(max_y_point)+20, int(max_x_point+20)+20, 3)
-    rect_img = np.ones(img_size, dtype=np.uint8)
-    cv2.drawContours(rect_img, [box], 0, color, 2)
+        #Draw rectangle
+        max_x_point = box[0][0]
+        max_y_point = box[0][1]
+        for point in box:
+            if point[0] > max_x_point:
+                max_x_point = point[0]
+            if point[1] > max_y_point:
+                max_y_point = point[1]
+        color = (0, 0, 255)
+        img_size = (int(max_y_point)+20, int(max_x_point+20)+20, 3)
+        rect_img = np.ones(img_size, dtype=np.uint8)
+        cv2.drawContours(rect_img, [box], 0, color, 2)
 
-    #Returns the image of the rectangle 
-    #and the rect object that contains all info about the rectangle ((x,y), (height, width), rotation)
-    return rect_img, rect
+        #Returns the image of the rectangle 
+        #and the rect object that contains all info about the rectangle ((x,y), (height, width), rotation)
+        return rect_img, rect, box
+    else:
+        color = (0, 0, 255)
+        cv2.drawContours(image, [box], 0, color, 2)
+        return image, rect, box
 
 def find_encl(image):
     '''Finds the smallest enclosing circle of a leaf.'''
