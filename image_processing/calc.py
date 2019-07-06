@@ -121,9 +121,29 @@ def calc_leaf_circumference(image):
     cnt_img, _ = f.find_cnt(image)
     gray_image = cv2.cvtColor(cnt_img, cv2.COLOR_BGR2GRAY)
     circumference = cv2.countNonZero(gray_image)
+    print(circumference)
+
+def calc_cc_ratios(image):
+    '''Calculates ratio of enclosing circle
+    and leaf circumferences.'''
+
+    encl_circ = calc_encl_circumference(image)
+
+    cnt,_ = f.find_cnt(image)
+    cnt = cv2.cvtColor(cnt, cv2.COLOR_RGB2GRAY)
+    leaf_circ = cv2.countNonZero(cnt)
+
+    ratio = leaf_circ/encl_circ
+    print(ratio)
+
+
+
 def calc_encl_circumference(image):
     '''Calulates the circumference of the enclosing circle.'''
 
-    cnt,_ = f.find_cnt(image)
-    return cv2.countNonZero(cnt)
+    encl,_ = f.find_encl(image)
+    cnt,_=f.find_cnt(encl)
+    cnt = cv2.cvtColor(cnt, cv2.COLOR_BGR2GRAY)
+    circ = cv2.countNonZero(cnt)
+    return circ
 
