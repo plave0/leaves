@@ -184,3 +184,14 @@ def calc_encl_circumference(image):
     cnt = cv2.cvtColor(cnt, cv2.COLOR_BGR2GRAY)
     circ = cv2.countNonZero(cnt)
     return circ
+
+def calc_all(image):
+    print(calc_rectangularity(image))
+    print(calc_circularity(image))
+    print(calc_hw_ratio(image))
+    print(calc_simetry(image))
+    print(calc_cc_ratio(image))
+    print(calc_ca_ratio(image))
+    print(calc_ch_ratio(image))
+    print(calc_cw_ratio(image))
+    print(calc_center_distance_ratio(image))
