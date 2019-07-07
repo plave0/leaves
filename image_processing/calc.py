@@ -186,6 +186,8 @@ def calc_encl_circumference(image):
     return circ
 
 def calc_all(image):
+    '''Calculate all the features.'''
+    
     print(calc_rectangularity(image))
     print(calc_circularity(image))
     print(calc_hw_ratio(image))

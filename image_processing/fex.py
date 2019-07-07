@@ -27,9 +27,9 @@ def find_cnt(image):
 
     #Find contour
     thr = find_thresh(image)
-    #edge = find_edge(thr)
     cnt,_ = cv2.findContours(thr, 1, 2)
 
+    #Find the largest cnt
     max_len_index = 0
     for i in range(len(cnt)):    
         if cv2.arcLength(cnt[i], True) > cv2.arcLength(cnt[max_len_index], True):
@@ -186,6 +186,8 @@ def show_image(image, title = "img"):
     cv2.destroyAllWindows()
 
 def test_fex(img):
+    '''Test all the features of an image.'''
+
     image = find_edge(img)
     res = resize_image(image,0.4)
     show_image(res)
