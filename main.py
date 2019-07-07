@@ -15,10 +15,10 @@ def main():
 
     rows = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute())
     forest = rf.build_forest(rows,2)
-    rf.print_forest(forest)
+    #rf.print_forest(forest)
     row = rows.values[0]
-    print(row)
-    print(forest.check_row(row))
+    print(forest.calc_accu())
+    #print(forest.check_row(row))
     
 
 if __name__ == '__main__':
