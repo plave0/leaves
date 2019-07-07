@@ -5,6 +5,7 @@ import itertools
 from collections import Counter
 import os.path
 from pathlib import Path
+import numpy as np
 
 DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute()).columns
 
@@ -36,21 +37,6 @@ def generate_combinations(len, set_range):
     combinations = itertools.combinations(range(set_range+1), len) #Generate combinations
     return combinations #Retuns all combinations
 
-def get_subset(rows, columns = []):
-    '''Get a subset of columns from a dataset.
-
-    Parameter columns represents an array of integers. 
-    This ints are indexes of columns in the original dataset
-    that will be put in the new subset.'''
-
-    sub_columns = [] #Empty array of columns
-    for col in columns: 
-        sub_columns.append(rows[[DATASET_HEADERS[col]]]) #Append defined columns to the sub_columns array
-    sub_columns.append(rows[[DATASET_HEADERS[-1]]]) #Append the label column to the sub_columns array
-    subset = pd.concat(sub_columns, axis=1) #Form a datafreme from all the extracted columns
-
-    return subset #Return the dataframe
-
 def buil_bootstrapped_dataset(rows):
     '''Builds a bootstrapped dataset out of dateset passed as the parameter.
 
@@ -80,17 +66,26 @@ def buil_bootstrapped_dataset(rows):
 
     return df_bootstrapped, df_out_of_bag # Return the new datasets
 
-def build_forest(rows):
+def calc_num_on_trees(factor, num_of_cols):
+    num_of_trees = 1
+    while factor<=num_of_cols:
+        num_of_trees*=factor
+        num_of_cols-=1
+    
+    num_of_trees*=num_of_cols
+    print(num_of_trees)
+    return num_of_trees
+
+def build_forest(rows, factor):
     '''Builds the forest. 
 
     Creates deciosion node classes and appentds
     them into an array defined int Forest class.'''
     forest = Forest() #Create an instance of a Forest
-    btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
-    combinations = generate_combinations(2, 2) #Create all posible combinations of numbers(rows)
-    for comb in combinations: #For each cobination of columns
-        subset = get_subset(btset, comb) #Generate the subset of columns from bs dataset
-        tree = dt.build_tree(subset.values) #Build a decision tree form the subset
+    num_of_trees = calc_num_on_trees(factor,len(rows.values[0])-1)
+    for i in range(num_of_trees*2):
+        btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
+        tree = dt.build_tree(np.array(btset.values),factor,[]) #Build a decision tree form the subset
         forest.trees.append(tree) #Append it to the Forest object
 
     return forest #Return the Forest object
