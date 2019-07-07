@@ -5,40 +5,48 @@ import os
 from pathlib import Path
 from tqdm import tqdm
 import image_processing.calc as c
+import image_processing.fex as f
 
 
 def create_dataset():
     data = {}
-    data['col0'] = []
-    data['col1'] = []
-    data['col2'] = []
-    data['col3'] = []
-    data['col4'] = []
-    data['col5'] = []
-    data['col6'] = []
-    data['col7'] = []
-    data['col8'] = []
+    data['hw_ratio'] = []
+    data['simetry'] = []
+    data['circularity'] = []
+    data['rectangularity'] = []
+    data['ca_ratio'] = []
+    data['cc_ratio'] = []
+    data['ch_ratio'] = []
+    data['cw_ratio'] = []
+    data['center_distance_ratio'] = []
     data['label'] = []
 
     folder = str(Path(sys.argv[1]).absolute())
-    for i in tqdm(range(1599, 1602)):
-        image_name = str(i)+'.jpg'
-        image_path = os.path.join(folder,image_name)
+    files = os.listdir(folder)
+
+    
+    #print(leaf_range)
+    for file in tqdm(files):
+        image_path = os.path.join(folder,file)
         img = cv2.imread(image_path)
 
-        data['col0'].append(c.calc_hw_ratio(img))
-        data['col1'].append(c.calc_simetry(img))
-        data['col2'].append(c.calc_circularity(img))
-        data['col3'].append(c.calc_rectangularity(img))
-        data['col4'].append(c.calc_ca_ratio(img))
-        data['col5'].append(c.calc_cc_ratio(img))
-        data['col6'].append(c.calc_ch_ratio(img))
-        data['col7'].append(c.calc_cw_ratio(img))
-        data['col8'].append(c.calc_center_distance_ratio(img))
+        i = file[0:4]
+        data['hw_ratio'].append(c.calc_hw_ratio(img))
+        data['simetry'].append(c.calc_simetry(img))
+        data['circularity'].append(c.calc_circularity(img))
+        data['rectangularity'].append(c.calc_rectangularity(img))
+        data['ca_ratio'].append(c.calc_ca_ratio(img))
+        data['cc_ratio'].append(c.calc_cc_ratio(img))
+        data['ch_ratio'].append(c.calc_ch_ratio(img))
+        data['cw_ratio'].append(c.calc_cw_ratio(img))
+        data['center_distance_ratio'].append(c.calc_center_distance_ratio(img))
         data['label'].append(get_label(i))
+    
 
     df = pandas.DataFrame(data)
-    #df.to_csv(index=False)
+    new_file = Path('dataset.csv').absolute()
+    exported_csv = df.to_csv(new_file,index=False)
+    
 
 def get_label(i):
     if i in range(1001,1060):
