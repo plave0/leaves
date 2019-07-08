@@ -97,7 +97,7 @@ def calc_leaf_area(image):
 
     #Calculate and return leaf area
     cnt_img, cnt = f.find_cnt(image)
-    return cv2.contourArea(cnt[0])
+    return cv2.contourArea(cnt)
 
 def calc_cc_ratio(image):
     '''Calculates ratio of enclosing circle
@@ -112,7 +112,7 @@ def calc_cc_ratio(image):
     leaf_circ = cv2.countNonZero(cnt)
 
     #Return ratio
-    return leaf_circ/encl_circ
+    return encl_circ/leaf_circ
 
 def calc_ca_ratio(image):
     '''Calculates the ration betwen the 
@@ -123,7 +123,7 @@ def calc_ca_ratio(image):
     
     #Calculates leaf area
     _,cnt = f.find_cnt(image)
-    area = cv2.contourArea(cnt[0])
+    area = cv2.contourArea(cnt)
 
     #Returns ratio
     return area/encl_circ
@@ -188,12 +188,21 @@ def calc_encl_circumference(image):
 def calc_all(image):
     '''Calculate all the features.'''
     
-    print(calc_hw_ratio(image))
-    print(calc_simetry(image))
-    print(calc_circularity(image))
-    print(calc_rectangularity(image))
-    print(calc_ca_ratio(image))
-    print(calc_cc_ratio(image))
-    print(calc_ch_ratio(image))
-    print(calc_cw_ratio(image))
-    print(calc_center_distance_ratio(image))
+    print("hw ratio:" + str(calc_hw_ratio(image)))
+    print("===")
+    print("simetry:" + str(calc_simetry(image)))
+    print("===")
+    print("circularity:" + str(calc_circularity(image)))
+    print("===")
+    print("rectangularity:" + str(calc_rectangularity(image)))
+    print("===")
+    print("ca ratio:" + str(calc_ca_ratio(image)))
+    print("===")
+    print("cc ratio:" + str(calc_cc_ratio(image)))
+    print("===")
+    print("ch ratio:" + str(calc_ch_ratio(image)))
+    print("===")
+    print("cw ratio:" + str(calc_cw_ratio(image)))
+    print("===")
+    print("center distance ratio:" + str(calc_center_distance_ratio(image)))
+    print("===")
