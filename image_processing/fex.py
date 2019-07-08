@@ -13,7 +13,7 @@ def morph_adjust(image):
 
 def find_edge(image):
     '''Returns the edge of a leaf.'''
-    edge = cv2.Canny(image, 300, 480)
+    edge = cv2.Canny(image, 20, 100)
     return edge
 
 def find_thresh(image):
@@ -27,12 +27,17 @@ def find_cnt(image):
 
     #Find contour
     thr = find_thresh(image)
-    edge = find_edge(thr)
-    cnt,_ = cv2.findContours(edge, 1, 2)
+    cnt,_ = cv2.findContours(thr, 1, 2)
+
+    #Find the largest cnt
+    max_len_index = 0
+    for i in range(len(cnt)):    
+        if cv2.arcLength(cnt[i], True) > cv2.arcLength(cnt[max_len_index], True):
+            max_len_index = i
 
     #Draw contour
-    new_img = np.zeros((edge.shape[0], edge.shape[1], 3), dtype = np.uint8)
-    cv2.drawContours(new_img, cnt, 0, (255, 255, 0))
+    new_img = np.zeros(image.shape, dtype = np.uint8)
+    cv2.drawContours(new_img, cnt, max_len_index, (255, 255, 0))
 
     #Returns drawn contour and the contour object
     return new_img, cnt
@@ -142,10 +147,10 @@ def find_encl(image, keep_original=False):
         while y-radius < float(0):
             y+=50
     
-        
+        center = (int(x), int(y))
         #Draw circle
         color = (255,255,255)
-        img_size = (int(x + radius + 100), int(y + radius + 100), 3)
+        img_size = (int(y + radius + 100),int(x + radius + 100),3)
         new_img = np.ones(img_size, dtype=np.uint8)
         cv2.circle(new_img,center,radius, color,-1)
 
@@ -179,3 +184,25 @@ def show_image(image, title = "img"):
     cv2.imshow(title, image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+def test_fex(img):
+    '''Test all the features of an image.'''
+
+    image = find_edge(img)
+    res = resize_image(image,0.4)
+    show_image(res)
+    image = find_thresh(img)
+    res = resize_image(image,0.4)
+    show_image(res)
+    image,_ = find_cnt(img)
+    res = resize_image(image,0.4)
+    show_image(res)
+    image,_ = find_hull(img)
+    res = resize_image(image,0.4)
+    show_image(res)
+    image,_,_ = find_rect(img)
+    res = resize_image(image,0.4)
+    show_image(res)
+    image,_,_ = find_encl(img)
+    res = resize_image(image,0.4)
+    show_image(res)

@@ -70,6 +70,9 @@ def buil_bootstrapped_dataset(rows):
     return df_bootstrapped, df_out_of_bag # Return the new datasets
 
 def calc_num_on_trees(factor, num_of_cols):
+    '''Calculate the number of trees to generate.'''
+
+    #Calc the number of combinations
     num_of_trees = 1
     while factor<=num_of_cols:
         num_of_trees*=factor
@@ -89,17 +92,20 @@ def build_forest(rows, factor):
         btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
         tree = dt.build_tree(np.array(btset.values),factor,[]) #Build a decision tree form the subset
 
+        #Find all predictions
         predictions = {}
         for row in out.values:
-            label = row[-1]
-            tree_prediction = tree.check_row(row).keys()
+            label = row[-1] #Label
+            tree_prediction = tree.check_row(row).keys() #Generate prediction
 
+            #Mergig the predictions
             if label not in predictions.keys():
                 predictions[label]=list(tree_prediction)
             else:
                 for pred in list(tree_prediction):
                     predictions[label].append(pred)
             
+        #Calculating oob error prediction
         for key in predictions.keys():
             freq_counter=Counter(predictions[key])
             most_freq = freq_counter.most_common(1)[0][0]
