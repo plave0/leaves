@@ -188,12 +188,12 @@ def calc_encl_circumference(image):
 def calc_all(image):
     '''Calculate all the features.'''
     
-    print(calc_rectangularity(image))
-    print(calc_circularity(image))
     print(calc_hw_ratio(image))
     print(calc_simetry(image))
-    print(calc_cc_ratio(image))
+    print(calc_circularity(image))
+    print(calc_rectangularity(image))
     print(calc_ca_ratio(image))
+    print(calc_cc_ratio(image))
     print(calc_ch_ratio(image))
     print(calc_cw_ratio(image))
     print(calc_center_distance_ratio(image))
