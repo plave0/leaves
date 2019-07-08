@@ -48,13 +48,16 @@ def find_hull(image):
     #Find image contour
     img, cnt = find_cnt(image)
 
-    new_img = np.zeros(img.shape, dtype = np.uint8) #Create a blank image (array of zeros)
-    color = (256,256,256) #Define color for drawing the hulls
+    #Find hull
     hull_list = [] #Empty hull list
-
     hull_list.append(cv2.convexHull(cnt))
 
+    #Drawing hull
+    new_img = np.zeros(img.shape, dtype = np.uint8) #Create a blank image (array of zeros)
+    color = (256,256,256) #Define color for drawing the hulls
     cv2.drawContours(new_img, hull_list, 0, color) #Draw the longest hull to the blank image
+
+    #Return hull image and hull object
     return new_img, hull_list[0] #Return the image
 
 def find_rect(image, keep_original=False):
@@ -184,18 +187,23 @@ def test_fex(img):
     image = find_edge(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image = find_thresh(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image,_ = find_cnt(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image,_ = find_hull(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image,_,_ = find_rect(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image,_,_ = find_encl(img)
     res = resize_image(image,0.4)
     show_image(res)
