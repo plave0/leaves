@@ -2,7 +2,7 @@
 import image_processing.fex as f
 import cv2
 import numpy as np
-from math import sqrt,pow
+from math import sqrt,pow,pi
 
 def calc_rectangularity(image):
     '''Calculates the rectangularity of a leaf.'''
@@ -23,8 +23,8 @@ def calc_circularity(image):
     '''Calculates the circularity of a leaf.'''
 
     #Calculates enclosing circle area
-    img, circ, _ = f.find_encl(image)
-    circ_area = cv2.contourArea(circ)
+    _, _, circ = f.find_encl(image)
+    circ_area = pow(circ[1],2)*pi
 
     #Calculate leaf area
     leaf_area = calc_leaf_area(image)

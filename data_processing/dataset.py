@@ -23,7 +23,7 @@ def create_dataset():
     data['cw_ratio'] = []
     data['center_distance_ratio'] = []
     data['label'] = []
-    data['image'] = []
+    #data['image'] = []
 
     #Reading target directory
     folder = str(Path(sys.argv[1]).absolute()) #Reads target from cmd arg
@@ -49,7 +49,7 @@ def create_dataset():
         data['cw_ratio'].append(c.calc_cw_ratio(img))
         data['center_distance_ratio'].append(c.calc_center_distance_ratio(img))
         data['label'].append(get_label(int(i)))
-        data['image'].append(i)
+        #data['image'].append(i)
     
 
     #Create a pandas Dataframe from the dict and write it into a .csv file

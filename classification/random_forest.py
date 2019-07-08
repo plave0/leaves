@@ -6,6 +6,7 @@ from collections import Counter
 import os.path
 from pathlib import Path
 import numpy as np
+from tqdm import tqdm
 
 DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute()).columns
 
@@ -88,7 +89,7 @@ def build_forest(rows, factor):
     them into an array defined int Forest class.'''
     forest = Forest() #Create an instance of a Forest
     num_of_trees = calc_num_on_trees(factor,len(rows.values[0])-1)
-    for i in range(num_of_trees*2):
+    for i in tqdm(range(100)):
         btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
         tree = dt.build_tree(np.array(btset.values),factor,[]) #Build a decision tree form the subset
 
