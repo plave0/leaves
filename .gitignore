@@ -107,3 +107,6 @@ venv.bak/
 #image
 /data_processing/Leaves
 /data_processing/*.csv
+
+#log
+log.txt
