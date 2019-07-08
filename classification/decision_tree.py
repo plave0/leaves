@@ -1,6 +1,8 @@
 import pandas as pd
 import os.path
 from pathlib import Path
+import random
+import numpy as np
 
 DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute()).columns
 
@@ -72,15 +74,18 @@ def info_gain(left, right, current_uncertainty):
     p = float(len(left)) / (len(left) + len(right))
     return current_uncertainty - p * gini(left) - (1 - p) * gini(right)
 
-def find_best_split(rows):
+def find_best_split(rows,factor,num_of_columns, used_columns):
     """Find the best question to ask by iterating over every feature / value
     and calculating the information gain."""
     best_gain = 0  # keep track of the best information gain
     best_question = None  # keep train of the feature / value that produced it
     current_uncertainty = gini(rows)
-    n_features = len(rows[0]) - 1   # number of columns
+    n_features = [i for i in range(0,num_of_columns) if i not in used_columns] # number of columns
 
-    for col in range(n_features):  # for each feature
+    if len(n_features)>factor:
+        n_features = random.sample(n_features, factor)
+
+    for col in n_features:  # for each feature
 
         values = set([row[col] for row in rows])  # unique values in the column
 
@@ -147,8 +152,8 @@ class Decision_Node:
             else:
                 return self.false_branch.predictions
 
-
-def build_tree(rows):
+    
+def build_tree(rows, factor ,used_columns=[]):
     """Builds the tree.
     Rules of recursion: 1) Believe that it works. 2) Start by checking
     for the base case (no further information gain). 3) Prepare for
@@ -158,7 +163,11 @@ def build_tree(rows):
     # Try partitioing the dataset on each of the unique attribute,
     # calculate the information gain,
     # and return the question that produces the highest gain.
-    gain, question = find_best_split(rows)
+    num_of_columns = len(rows[0])-1
+    gain, question = find_best_split(rows,factor,num_of_columns,used_columns)
+
+    if question != None:
+        used_columns.append(question.column)
 
     # Base case: no further info gain
     # Since we can ask no further questions,
@@ -171,10 +180,10 @@ def build_tree(rows):
     true_rows, false_rows = partition(rows, question)
 
     # Recursively build the true branch.
-    true_branch = build_tree(true_rows)
+    true_branch = build_tree(true_rows,factor, used_columns)
 
     # Recursively build the false branch.
-    false_branch = build_tree(false_rows)
+    false_branch = build_tree(false_rows,factor, used_columns)
 
     # Return a Question node.
     # This records the best feature / value to ask at this point,
