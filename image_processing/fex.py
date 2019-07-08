@@ -40,7 +40,7 @@ def find_cnt(image):
     cv2.drawContours(new_img, cnt, max_len_index, (255, 255, 0))
 
     #Returns drawn contour and the contour object
-    return new_img, cnt
+    return new_img, cnt[max_len_index]
 
 def find_hull(image):
     '''Returns image of the convex hull.'''
@@ -48,27 +48,23 @@ def find_hull(image):
     #Find image contour
     img, cnt = find_cnt(image)
 
-    new_img = np.zeros((img.shape[0], img.shape[1], 3), dtype = np.uint8) #Create a blank image (array of zeros)
-    color = (256,256,256) #Define color for drawing the hulls
+    #Find hull
     hull_list = [] #Empty hull list
-    for i in range(len(cnt)): #Append all hulls
-        hull = cv2.convexHull(cnt[i])
-        hull_list.append(hull)
+    hull_list.append(cv2.convexHull(cnt))
 
-    max_len_index = 0 #Index of the longest hull
-    for i in range(len(hull_list)): #Iterate through all hulls
-        #Check if the current hull is longer than the current longest
-        if cv2.arcLength(hull_list[i], True) > cv2.arcLength(hull_list[max_len_index], True):
-            max_len_index = i
+    #Drawing hull
+    new_img = np.zeros(img.shape, dtype = np.uint8) #Create a blank image (array of zeros)
+    color = (256,256,256) #Define color for drawing the hulls
+    cv2.drawContours(new_img, hull_list, 0, color) #Draw the longest hull to the blank image
 
-    cv2.drawContours(new_img, hull_list, max_len_index, color) #Draw the longest hull to the blank image
-    return new_img, hull_list[max_len_index] #Return the image
+    #Return hull image and hull object
+    return new_img, hull_list[0] #Return the image
 
 def find_rect(image, keep_original=False):
     '''Finds the smallest bounding rectangle of a leaf.'''
 
     #Find leaf convex hull
-    _, hull = find_hull(image)
+    hull_img, hull = find_hull(image)
 
     #Generate rectangle
     rect = cv2.minAreaRect(hull)
@@ -191,18 +187,23 @@ def test_fex(img):
     image = find_edge(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image = find_thresh(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image,_ = find_cnt(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image,_ = find_hull(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image,_,_ = find_rect(img)
     res = resize_image(image,0.4)
     show_image(res)
+    #
     image,_,_ = find_encl(img)
     res = resize_image(image,0.4)
     show_image(res)

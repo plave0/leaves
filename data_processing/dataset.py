@@ -5,10 +5,13 @@ import os
 from pathlib import Path
 from tqdm import tqdm
 import image_processing.calc as c
-import image_processing.fex as f
 
 
 def create_dataset():
+    '''Loads all images from image dataset, calculates the features,
+    and places them in a .csv file. '''
+
+    #Create dict and define all the columns
     data = {}
     data['hw_ratio'] = []
     data['simetry'] = []
@@ -22,16 +25,20 @@ def create_dataset():
     data['label'] = []
     data['image'] = []
 
-    folder = str(Path(sys.argv[1]).absolute())
+    #Reading target directory
+    folder = str(Path(sys.argv[1]).absolute()) #Reads target from cmd arg
     files = os.listdir(folder)
 
-    
-    #print(leaf_range)
+    #Calculating the features
     for file in tqdm(files):
+
+        #Load image
         image_path = os.path.join(folder,file)
         img = cv2.imread(image_path)
 
-        i = file[0:4]
+        i = file[0:4] #Get file name
+
+        #Read all the features and place them in the dict
         data['hw_ratio'].append(c.calc_hw_ratio(img))
         data['simetry'].append(c.calc_simetry(img))
         data['circularity'].append(c.calc_circularity(img))
@@ -45,12 +52,15 @@ def create_dataset():
         data['image'].append(i)
     
 
+    #Create a pandas Dataframe from the dict and write it into a .csv file
     df = pandas.DataFrame(data)
     new_file = Path('dataset.csv').absolute()
     exported_csv = df.to_csv(new_file,index=False)
     
 
 def get_label(i):
+    '''Get leaf label based on the image number.'''
+    
     if i in range(1001,1060):
         return "pubescent bamboo"
     elif i in range(1060,1123):
