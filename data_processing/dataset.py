@@ -20,6 +20,7 @@ def create_dataset():
     data['cw_ratio'] = []
     data['center_distance_ratio'] = []
     data['label'] = []
+    data['image'] = []
 
     folder = str(Path(sys.argv[1]).absolute())
     files = os.listdir(folder)
@@ -40,7 +41,8 @@ def create_dataset():
         data['ch_ratio'].append(c.calc_ch_ratio(img))
         data['cw_ratio'].append(c.calc_cw_ratio(img))
         data['center_distance_ratio'].append(c.calc_center_distance_ratio(img))
-        data['label'].append(get_label(i))
+        data['label'].append(get_label(int(i)))
+        data['image'].append(i)
     
 
     df = pandas.DataFrame(data)
