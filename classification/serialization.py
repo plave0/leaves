@@ -7,7 +7,9 @@ def serialize_forest(object):
         for tree in object.trees:
             trees.append(serialize_node(tree))
         
-        return {'trees':trees, 'error_estimates':object.oob_error_estimates}
+        return {'trees':trees,
+        'error_estimates':object.oob_error_estimates,
+        'factor':object.factor}
 
 def serialize_question(object):
     if isinstance(object, dt.Question):
@@ -30,6 +32,7 @@ def deserialize_forest(data):
         forest.trees.append(node)
     
     forest.oob_error_estimates=data['error_estimates']
+    forest.factor = data['factor']
     return forest
 
         
