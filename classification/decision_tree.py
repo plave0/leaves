@@ -3,11 +3,11 @@ import os.path
 from pathlib import Path
 import random
 import numpy as np
+import json
+import fastnumbers as fn
+import math
 
 DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute()).columns
-
-def is_numeric(value):
-    return isinstance(value, int) or isinstance(value, float)
 
 class Question:
     def __init__(self, column, value):
@@ -16,7 +16,7 @@ class Question:
 
     def match(self, data):
         val = data[self.column]
-        if is_numeric(val):
+        if isinstance(val, float):
             return val >= self.value
         else: 
             return val == self.value
@@ -25,10 +25,53 @@ class Question:
         # This is just a helper method to print
         # the question in a readable format.
         condition = "=="
-        if is_numeric(self.value):
+        if fn.isfloat(self.value):
             condition = ">="
         return "Is %s %s %s?" % (
             DATASET_HEADERS[self.column], condition, str(self.value))
+
+
+class Leaf:
+    """A Leaf node classifies data.
+
+    This holds a dictionary of class (e.g., "Apple") -> number of times
+    it appears in the rows from the training data that reach this leaf.
+    """
+
+    def __init__(self, rows):
+        if isinstance(rows, dict):
+            self.predictions = rows
+        else:
+            self.predictions = class_counts(rows)
+
+
+class Decision_Node:
+    """A Decision Node asks a question.
+
+    This holds a reference to the question, and to the two child nodes.
+    """
+
+    def __init__(self,
+                 question,
+                 true_branch,
+                 false_branch):
+        self.question = question
+        self.true_branch = true_branch
+        self.false_branch = false_branch
+
+    def check_row(self, row):
+        res = self.question.match(row)
+
+        if res:
+            if not isinstance(self.true_branch, Leaf):
+                return self.true_branch.check_row(row)
+            else:
+                return self.true_branch.predictions
+        else:
+            if not isinstance(self.false_branch, Leaf):
+                return self.false_branch.check_row(row)
+            else:
+                return self.false_branch.predictions
 
 def class_counts(data):
     """Counts the number of each type of example in a dataset."""
@@ -61,7 +104,7 @@ def gini(data):
     impurity = 1
     for lbl in counts:
         prob_of_lbl = counts[lbl] / float(len(data))
-        impurity -= prob_of_lbl**2
+        impurity -= math.pow(prob_of_lbl,2)
     return impurity
 
 
@@ -111,47 +154,7 @@ def find_best_split(rows,factor,num_of_columns, used_columns):
                 best_gain, best_question = gain, question
 
     return best_gain, best_question
-
-
-class Leaf:
-    """A Leaf node classifies data.
-
-    This holds a dictionary of class (e.g., "Apple") -> number of times
-    it appears in the rows from the training data that reach this leaf.
-    """
-
-    def __init__(self, rows):
-        self.predictions = class_counts(rows)
-
-
-class Decision_Node:
-    """A Decision Node asks a question.
-
-    This holds a reference to the question, and to the two child nodes.
-    """
-
-    def __init__(self,
-                 question,
-                 true_branch,
-                 false_branch):
-        self.question = question
-        self.true_branch = true_branch
-        self.false_branch = false_branch
-
-    def check_row(self, row):
-        res = self.question.match(row)
-
-        if res:
-            if not isinstance(self.true_branch, Leaf):
-                return self.true_branch.check_row(row)
-            else:
-                return self.true_branch.predictions
-        else:
-            if not isinstance(self.false_branch, Leaf):
-                return self.false_branch.check_row(row)
-            else:
-                return self.false_branch.predictions
-
+            
     
 def build_tree(rows, factor ,used_columns=[]):
     """Builds the tree.

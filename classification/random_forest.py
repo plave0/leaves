@@ -32,6 +32,7 @@ class Forest:
     def calc_accu(self):
          return np.mean(np.array(self.oob_error_estimates))*100
 
+
 def generate_combinations(len, set_range):
     ''' Generates all posible number combinations of a given length and a given range.
 
@@ -48,10 +49,13 @@ def buil_bootstrapped_dataset(rows):
     The bootstrapped data set has the same number of rows as the original dataset.'''
 
     df_bootstrapped = rows.sample(n=len(rows.values),replace=True, random_state=1)
-    df_out_of_bag = pd.concat([rows, df_bootstrapped]).drop_duplicates(keep=False)
+    #diff_df = pd.concat([rows, df_bootstrapped]).drop_duplicates(keep=False)
+
+    diff_df = pd.merge(rows, df_bootstrapped, how='outer', indicator='Exist')
+    diff_df = diff_df.loc[diff_df['Exist'] != 'both']
     
     
-    return df_bootstrapped, df_out_of_bag # Return the new datasets
+    return df_bootstrapped, diff_df # Return the new datasets
 
 def calc_num_on_trees(factor, num_of_cols):
     '''Calculate the number of trees to generate.'''
@@ -72,7 +76,7 @@ def build_forest(rows, factor):
     them into an array defined int Forest class.'''
     forest = Forest() #Create an instance of a Forest
     num_of_trees = calc_num_on_trees(factor,len(rows.values[0])-1)
-    for i in tqdm(range(100)):
+    for i in tqdm(range(50)):
         btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
         tree = dt.build_tree(np.array(btset.values),factor,[]) #Build a decision tree form the subset
 

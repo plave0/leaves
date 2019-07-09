@@ -8,6 +8,9 @@ import cv2
 from pathlib import Path
 import os
 import cProfile, pstats, io
+import classification.serialization as s
+import numpy as np
+import json
 
 def profile(fnc):
     
@@ -28,21 +31,18 @@ def profile(fnc):
 
     return inner
 
-@profile
+#@profile
 def main():
     '''Main program funcion
     This is just a testing function'''
 
-    rows = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute())
-    forest = rf.build_forest(rows,2)
-    #rf.print_forest(forest)
-    #row = rows.values[0]
+    rows = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/dataset_3.csv').absolute())
+
+    forest = rf.build_forest(rows,5)
     print(forest.calc_accu())
-    #print(forest.check_row(row))
-    #d.create_dataset()
-
-
-    
+    jsonForest = s.serialize_forest(forest)
+    with open('forest.json','w') as f:
+        json.dump(jsonForest, f)
 
 if __name__ == '__main__':
     main()

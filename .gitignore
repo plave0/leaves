@@ -107,6 +107,9 @@ venv.bak/
 #image
 /data_processing/Leaves
 /data_processing/*.csv
+/samples/dataset*.csv
 
-#log
-log.txt
+#files
+log*.txt
+*.json
+
