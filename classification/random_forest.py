@@ -15,6 +15,7 @@ class Forest:
     def __init__(self):
         self.trees = []
         self.oob_error_estimates = []
+        self.factor = 0
 
     def check_row(self, row):
         '''Classifies the given row.
@@ -53,6 +54,7 @@ def buil_bootstrapped_dataset(rows):
 
     diff_df = pd.merge(rows, df_bootstrapped, how='outer', indicator='Exist')
     diff_df = diff_df.loc[diff_df['Exist'] != 'both']
+    diff_df.drop(labels='Exist', axis=1,inplace=True)
     
     
     return df_bootstrapped, diff_df # Return the new datasets
@@ -75,8 +77,9 @@ def build_forest(rows, factor):
     Creates deciosion node classes and appentds
     them into an array defined int Forest class.'''
     forest = Forest() #Create an instance of a Forest
+    forest.factor = factor
     num_of_trees = calc_num_on_trees(factor,len(rows.values[0])-1)
-    for i in tqdm(range(50)):
+    for i in tqdm(range(100)):
         btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
         tree = dt.build_tree(np.array(btset.values),factor,[]) #Build a decision tree form the subset
 
