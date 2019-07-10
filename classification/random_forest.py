@@ -10,6 +10,7 @@ import data_processing.configuration as config
 import data_processing.serialization as s
 import json
 import data_processing.recorder as r
+import random
 
 class Forest:
     '''Class that represents the random forest. Contains an array of decision trees.'''
@@ -41,7 +42,7 @@ def buil_bootstrapped_dataset(rows):
     The bootstrapped data set has the same number of rows as the original dataset.'''
 
     #Create bootstrapped dataset (type = pd.Dataframe)
-    df_bootstrapped = rows.sample(n=len(rows.values),replace=True, random_state=1)
+    df_bootstrapped = rows.sample(n=len(rows.values),replace=True, random_state=random.randint(1,101))
 
     #Create out of bag dataset (tyep = pd.Dataframe)
     diff_df = pd.merge(rows, df_bootstrapped, how='outer', indicator='Exist')
@@ -64,18 +65,24 @@ def build_forest(forest_name):
         btset, out = buil_bootstrapped_dataset(rowss)
         tree = dt.build_tree(np.array(btset.values),factorr,[]) 
 
+        print(btset)
+        print("-----")
+        print(out)
+        print("==========")
+
         #Find all predictions
         predictions = {}
         for row in out.values:
             label = row[-1] #Label
-            tree_prediction = tree.check_row(row).keys() #Generate prediction
+            tree_prediction = tree.check_row(row) #Generate prediction
 
             #Mergig the predictions
             if label not in predictions.keys():
-                predictions[label]=list(tree_prediction)
+                predictions[label]=tree_prediction
             else:
-                for pred in list(tree_prediction):
-                    predictions[label].append(pred)
+                for key,value in tree_prediction.items():
+                    prediction = predictions.get(label)
+                    prediction[key] += value
 
         error_estimates = []
         #Calculating oob error estimate

@@ -37,5 +37,6 @@ class ForestPromt(Cmd):
        clear()
 
 if __name__ == '__main__':  
-    promt = ForestPromt()
-    promt.cmdloop()
+    #promt = ForestPromt()
+    #promt.cmdloop()
+    rdf.build_forest('forest011')
