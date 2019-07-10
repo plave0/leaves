@@ -1,15 +1,11 @@
 import classification.decision_tree as dt
 import pandas as pd
-import random as rnd
 import itertools
 from collections import Counter
 import os.path
 from pathlib import Path
 import numpy as np
-from tqdm import tqdm
-from threading import Thread
 from multiprocessing import Process,Manager,Queue
-import ray
 
 DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/dataset_3.csv').absolute()).columns
 
@@ -36,25 +32,16 @@ class Forest:
     def calc_accu(self):
          return np.mean(np.array(self.oob_error_estimates))*100
 
-
-def generate_combinations(len, set_range):
-    ''' Generates all posible number combinations of a given length and a given range.
-
-    The paramer len defines the length of the generated arrays, 
-    and the parameter range defines the maximum posible number that can appear in the arrays.'''
-    
-    combinations = itertools.combinations(range(set_range+1), len) #Generate combinations
-    return combinations #Retuns all combinations
-
 def buil_bootstrapped_dataset(rows):
     '''Builds a bootstrapped dataset out of dateset passed as the parameter.
 
     It is built by taking random row from the original dataset and placing them in the bootstrapped dataset.
     The bootstrapped data set has the same number of rows as the original dataset.'''
 
+    #Create bootstrapped dataset (type = pd.Dataframe)
     df_bootstrapped = rows.sample(n=len(rows.values),replace=True, random_state=1)
-    #diff_df = pd.concat([rows, df_bootstrapped]).drop_duplicates(keep=False)
 
+    #Create out of bag dataset (tyep = pd.Dataframe)
     diff_df = pd.merge(rows, df_bootstrapped, how='outer', indicator='Exist')
     diff_df = diff_df.loc[diff_df['Exist'] != 'both']
     diff_df.drop(labels='Exist', axis=1,inplace=True)
@@ -62,33 +49,18 @@ def buil_bootstrapped_dataset(rows):
     
     return df_bootstrapped, diff_df # Return the new datasets
 
-def calc_num_on_trees(factor, num_of_cols):
-    '''Calculate the number of trees to generate.'''
-
-    #Calc the number of combinations
-    num_of_trees = 1
-    while factor<=num_of_cols:
-        num_of_trees*=factor
-        num_of_cols-=1
-    
-    num_of_trees*=num_of_cols
-    return num_of_trees
 
 def build_forest(rows, factor):
-    '''Builds the forest. 
+    '''Starts the processes that create the trees of the forest.'''
 
-    Creates deciosion node classes and appentds
-    them into an array defined int Forest class.'''
-
-    num_of_trees = calc_num_on_trees(factor,len(rows.values[0])-1)
-
-    cores_to_use = 2
-
+    ######################################################################
     def build(outputt):
+        '''Build a tree and calculates it's out of bag error estimate.
+        It return the tree and the error estimate through the outputt parameter.'''
         
+        #Creating the tree
         btset, out = buil_bootstrapped_dataset(rows)
-        tree = dt.build_tree(np.array(btset.values),factor,[]) #Build a decision tree form the subset
-        #dt.print_tree(tree)
+        tree = dt.build_tree(np.array(btset.values),factor,[]) 
 
         #Find all predictions
         predictions = {}
@@ -104,22 +76,22 @@ def build_forest(rows, factor):
                     predictions[label].append(pred)
 
         error_estimates = []
-        #Calculating oob error prediction
+        #Calculating oob error estimate
         for key in predictions.keys():
             freq_counter=Counter(predictions[key])
             most_freq = freq_counter.most_common(1)[0][0]
             error_estimates.append(int(key==most_freq))
 
         outputt.put((tree,error_estimates))
-        
+    ######################################################################  
 
-    forest = Forest() #Create an instance of a Forest
-    forest.factor = factor
+    #Create the forest
+    forest = Forest()
+    forest.factor = factor 
 
-    output = Queue()
-    
-    for i in range(2):
-
+    #Starting the processes
+    output = Queue() #Queue that will be used to store the outputs of all the processes
+    for i in range(2): 
         threads = []
         for _ in range(4):
             t = Process(target=build, args=(output,))
@@ -128,6 +100,7 @@ def build_forest(rows, factor):
         for t in threads:
             t.join()
 
+        #Geting the results and putting them in the forest object
         for _ in threads:
             result = output.get()
             forest.trees.append(result[0])
