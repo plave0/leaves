@@ -103,13 +103,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# forests 
+data/forests/*
 
-#image
-/data_processing/Leaves
-/data_processing/*.csv
-/samples/dataset*.csv
-
-#files
-log*.txt
-*.json
+# json files
+data/*.json
 
