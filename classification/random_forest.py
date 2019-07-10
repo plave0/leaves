@@ -6,8 +6,10 @@ import os.path
 from pathlib import Path
 import numpy as np
 from multiprocessing import Process,Manager,Queue
-
-DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/dataset_3.csv').absolute()).columns
+import data_processing.configuration as config
+import data_processing.serialization as s
+import json
+import data_processing.recorder as r
 
 class Forest:
     '''Class that represents the random forest. Contains an array of decision trees.'''
@@ -50,17 +52,17 @@ def buil_bootstrapped_dataset(rows):
     return df_bootstrapped, diff_df # Return the new datasets
 
 
-def build_forest(rows, factor):
+def build_forest():
     '''Starts the processes that create the trees of the forest.'''
 
     ######################################################################
-    def build(outputt):
+    def build(outputt, rowss, factorr):
         '''Build a tree and calculates it's out of bag error estimate.
         It return the tree and the error estimate through the outputt parameter.'''
         
         #Creating the tree
-        btset, out = buil_bootstrapped_dataset(rows)
-        tree = dt.build_tree(np.array(btset.values),factor,[]) 
+        btset, out = buil_bootstrapped_dataset(rowss)
+        tree = dt.build_tree(np.array(btset.values),factorr,[]) 
 
         #Find all predictions
         predictions = {}
@@ -85,16 +87,19 @@ def build_forest(rows, factor):
         outputt.put((tree,error_estimates))
     ######################################################################  
 
+    configuration = config.load_config()
+    rows = pd.read_csv(Path('data/datasets',configuration['dataset']))
+
     #Create the forest
     forest = Forest()
-    forest.factor = factor 
+    forest.factor = configuration['factor']
 
     #Starting the processes
     output = Queue() #Queue that will be used to store the outputs of all the processes
-    for i in range(2): 
+    for i in range(int(configuration['number_of_trees']/configuration['cores_to_use'])): 
         threads = []
-        for _ in range(4):
-            t = Process(target=build, args=(output,))
+        for _ in range(int(configuration['cores_to_use'])):
+            t = Process(target=build, args=(output,rows,forest.factor))
             t.start()
             threads.append(t)
         for t in threads:
@@ -107,10 +112,22 @@ def build_forest(rows, factor):
             for ee in result[1]:
                 forest.oob_error_estimates.append(ee)
 
-    return forest #Return the Forest object
+    save_forest(forest,'forest',configuration['dataset'])    
 
 def print_forest(forest:Forest):
     '''Forest display'''
     for tree in forest.trees:
         dt.print_tree(tree)
+
+def save_forest(forest,forest_name,dataset):
+    '''Saves the builts forest.'''
+    json_tree = s.serialize_forest(forest)
+    with open(Path('data/forests/forest.json'),'w+') as forest_file:
+        json.dump(json_tree,forest_file,indent=4)
+
+    r.save_res(forest.factor,
+                len(forest.trees),
+                forest.calc_accu(),
+                forest_name,
+                dataset)
 
