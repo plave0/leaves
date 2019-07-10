@@ -1,5 +1,7 @@
 from cmd import Cmd
+import os
 import data_processing.configuration as config
+import data_processing.recorder as r
 import classification.random_forest as rdf
 
 class ForestPromt(Cmd):
@@ -22,8 +24,18 @@ class ForestPromt(Cmd):
             print("Config doesn't exits.")
 
     def do_rdf(self, inp):
-        rdf.build_forest()
+        rdf.build_forest(inp)
 
-if __name__ == '__main__':
+    def do_createconfig(self, inp):
+        config.create_config_file()
+    
+    def do_createres(self, inp):
+        r.create_res_file()
+    
+    def do_clear(self, inp):
+       clear = lambda: os.system('clear')
+       clear()
+
+if __name__ == '__main__':  
     promt = ForestPromt()
     promt.cmdloop()

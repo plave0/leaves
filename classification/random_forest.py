@@ -52,7 +52,7 @@ def buil_bootstrapped_dataset(rows):
     return df_bootstrapped, diff_df # Return the new datasets
 
 
-def build_forest():
+def build_forest(forest_name):
     '''Starts the processes that create the trees of the forest.'''
 
     ######################################################################
@@ -112,7 +112,7 @@ def build_forest():
             for ee in result[1]:
                 forest.oob_error_estimates.append(ee)
 
-    save_forest(forest,'forest',configuration['dataset'])    
+    save_forest(forest,forest_name,configuration['dataset'])    
 
 def print_forest(forest:Forest):
     '''Forest display'''
@@ -122,7 +122,7 @@ def print_forest(forest:Forest):
 def save_forest(forest,forest_name,dataset):
     '''Saves the builts forest.'''
     json_tree = s.serialize_forest(forest)
-    with open(Path('data/forests/forest.json'),'w+') as forest_file:
+    with open(Path('data/forests/'+forest_name+'.json'),'w+') as forest_file:
         json.dump(json_tree,forest_file,indent=4)
 
     r.save_res(forest.factor,
