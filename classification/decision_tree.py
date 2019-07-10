@@ -7,8 +7,6 @@ import json
 import fastnumbers as fn
 import math
 
-DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/dataset_3.csv').absolute()).columns
-
 class Question:
     def __init__(self, column, value):
         self.column = column
