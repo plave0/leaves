@@ -7,8 +7,11 @@ import os.path
 from pathlib import Path
 import numpy as np
 from tqdm import tqdm
+from threading import Thread
+from multiprocessing import Process,Manager,Queue
+import ray
 
-DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/sample_dataset.csv').absolute()).columns
+DATASET_HEADERS = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/dataset_3.csv').absolute()).columns
 
 class Forest:
     '''Class that represents the random forest. Contains an array of decision trees.'''
@@ -76,12 +79,16 @@ def build_forest(rows, factor):
 
     Creates deciosion node classes and appentds
     them into an array defined int Forest class.'''
-    forest = Forest() #Create an instance of a Forest
-    forest.factor = factor
+
     num_of_trees = calc_num_on_trees(factor,len(rows.values[0])-1)
-    for i in tqdm(range(100)):
-        btset, out = buil_bootstrapped_dataset(rows) #Create a bs dataset and an ob dataset
+
+    cores_to_use = 2
+
+    def build(outputt):
+        
+        btset, out = buil_bootstrapped_dataset(rows)
         tree = dt.build_tree(np.array(btset.values),factor,[]) #Build a decision tree form the subset
+        #dt.print_tree(tree)
 
         #Find all predictions
         predictions = {}
@@ -95,14 +102,37 @@ def build_forest(rows, factor):
             else:
                 for pred in list(tree_prediction):
                     predictions[label].append(pred)
-            
+
+        error_estimates = []
         #Calculating oob error prediction
         for key in predictions.keys():
             freq_counter=Counter(predictions[key])
             most_freq = freq_counter.most_common(1)[0][0]
-            forest.oob_error_estimates.append(int(key==most_freq))
+            error_estimates.append(int(key==most_freq))
 
-        forest.trees.append(tree) #Append it to the Forest object
+        outputt.put((tree,error_estimates))
+        
+
+    forest = Forest() #Create an instance of a Forest
+    forest.factor = factor
+
+    output = Queue()
+    
+    for i in range(2):
+
+        threads = []
+        for _ in range(4):
+            t = Process(target=build, args=(output,))
+            t.start()
+            threads.append(t)
+        for t in threads:
+            t.join()
+
+        for _ in threads:
+            result = output.get()
+            forest.trees.append(result[0])
+            for ee in result[1]:
+                forest.oob_error_estimates.append(ee)
 
     return forest #Return the Forest object
 

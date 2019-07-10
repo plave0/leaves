@@ -11,6 +11,7 @@ import cProfile, pstats, io
 import classification.serialization as s
 import numpy as np
 import json
+import multiprocessing as mp
 
 def profile(fnc):
     
@@ -40,9 +41,10 @@ def main():
 
     forest = rf.build_forest(rows,5)
     print(forest.calc_accu())
-    jsonForest = s.serialize_forest(forest)
-    with open('forest.json','w') as f:
-        json.dump(jsonForest, f)
+
+    json_forest = s.serialize_forest(forest)
+    with open('forest.json', 'w') as f:
+        json.dump(json_forest,f)
 
 if __name__ == '__main__':
     main()
