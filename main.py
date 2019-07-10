@@ -1,27 +1,29 @@
-import classification.random_forest as rf
-import pandas as pd
-from pathlib import Path
-import os
-import classification.serialization as s
-import data_processing.recorder as r
-import json
+from cmd import Cmd
+import data_processing.configuration as config
+import classification.random_forest as rdf
 
-def main():
-    '''Main program funcion
-    This is just a testing function'''
+class ForestPromt(Cmd):
+    prompt = '>> '
+
+    def do_exit(self, inp):
+        return True
+    do_EOF = do_exit
+
+    def do_printconf(self, inp):
+        print(config.load_config())
     
-    '''
-    rows = pd.read_csv(Path(os.path.pardir, 'petnica-leaves/samples/dataset_3.csv').absolute())
+    def do_editconf(self, inp):
+        inp = inp.split()
+        if inp[0] in ['cores_to_use',"number_of_trees","factor"]:
+            config.change_config(inp[0],int(inp[1]))
+        elif inp[0] == "dataset":
+            config.change_config(inp[0],inp[1])
+        else:
+            print("Config doesn't exits.")
 
-    forest = rf.build_forest(rows,5)
-    print(forest.calc_accu())
-
-    json_forest = s.serialize_forest(forest)
-    with open('forest.json', 'w') as f:
-        json.dump(json_forest,f)
-    '''
-    r.save_res(4,50,78,"dataset_3")
-
+    def do_rdf(self, inp):
+        rdf.build_forest()
 
 if __name__ == '__main__':
-    main()
+    promt = ForestPromt()
+    promt.cmdloop()
