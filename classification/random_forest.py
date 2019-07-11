@@ -63,15 +63,7 @@ def build_forest(forest_name):
         
         #Creating the tree
         btset, out = buil_bootstrapped_dataset(rowss)
-        tree = dt.build_tree(np.array(btset.values),factorr,[]) 
-
-        print(btset)
-        print("-----")
-        print(out)
-        print("=========")
-
-        dt.print_tree(tree)
-        print("=========")
+        tree = dt.build_tree(np.array(btset.values),factorr,[])
 
         #Find all predictions
         predictions = {}
@@ -93,9 +85,6 @@ def build_forest(forest_name):
             freq_counter=Counter(predictions[key])
             predictions[key] = freq_counter.most_common(1)[0][0]
             error_estimates.append(int(key==predictions[key]))
-
-        print(predictions)
-        print("=========")
 
         outputt.put((tree,error_estimates))
     ######################################################################  
