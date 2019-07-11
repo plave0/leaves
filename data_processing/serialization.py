@@ -1,7 +1,7 @@
-import classification.random_forest as rf
 import classification.decision_tree as dt
 
 def serialize_forest(object):
+    import classification.random_forest as rf
     if isinstance(object,rf.Forest):
         trees = []
         for tree in object.trees:
@@ -25,6 +25,7 @@ def serialize_node(object):
         return {'predictions': object.predictions}
 
 def deserialize_forest(data):
+    import classification.random_forest as rf
     forest = rf.Forest()
     forest.trees = []
     for tree in data['trees']:
