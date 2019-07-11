@@ -68,7 +68,10 @@ def build_forest(forest_name):
         print(btset)
         print("-----")
         print(out)
-        print("==========")
+        print("=========")
+
+        dt.print_tree(tree)
+        print("=========")
 
         #Find all predictions
         predictions = {}
@@ -78,18 +81,21 @@ def build_forest(forest_name):
 
             #Mergig the predictions
             if label not in predictions.keys():
-                predictions[label]=tree_prediction
-            else:
-                for key,value in tree_prediction.items():
-                    prediction = predictions.get(label)
-                    prediction[key] += value
+                predictions[label]=[]
+            for key,value in tree_prediction.items():
+                for _ in range(value):
+                    predictions[label].append(key)
+
 
         error_estimates = []
         #Calculating oob error estimate
         for key in predictions.keys():
             freq_counter=Counter(predictions[key])
-            most_freq = freq_counter.most_common(1)[0][0]
-            error_estimates.append(int(key==most_freq))
+            predictions[key] = freq_counter.most_common(1)[0][0]
+            error_estimates.append(int(key==predictions[key]))
+
+        print(predictions)
+        print("=========")
 
         outputt.put((tree,error_estimates))
     ######################################################################  

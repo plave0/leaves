@@ -7,6 +7,8 @@ import json
 import fastnumbers as fn
 import math
 
+DATASET_HEADERS= ['color','diameter','wight','label']
+
 class Question:
     def __init__(self, column, value):
         self.column = column
@@ -14,7 +16,7 @@ class Question:
 
     def match(self, data):
         val = data[self.column]
-        if isinstance(val, float):
+        if isinstance(val, int) or isinstance(val,float):
             return val >= self.value
         else: 
             return val == self.value
