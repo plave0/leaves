@@ -1,5 +1,6 @@
 from cmd import Cmd
 import os
+from pathlib import Path
 import data_processing.configuration as config
 import data_processing.recorder as r
 import classification.random_forest as rdf
@@ -13,6 +14,15 @@ class ForestPromt(Cmd):
 
     def do_printconf(self, inp):
         print(config.load_config())
+
+    def do_printres(self, inp):
+        res = r.load_res()
+        print(res)
+
+    def do_forests(self, inp):
+        path = Path('data/forests')
+        for filename in sorted(os.listdir(path)):
+            print (filename)
     
     def do_editconf(self, inp):
         inp = inp.split()
@@ -37,6 +47,5 @@ class ForestPromt(Cmd):
        clear()
 
 if __name__ == '__main__':  
-    #promt = ForestPromt()
-    #promt.cmdloop()
-    rdf.build_forest('forest011')
+    promt = ForestPromt()
+    promt.cmdloop()

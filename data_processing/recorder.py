@@ -25,6 +25,13 @@ def save_res(factor,number_of_trees, precision,forest_name, dataset_name):
         results['results'].append(res)
         json.dump(results, res_file, indent=4)
 
+def load_res():
+    path = Path('data/res.json')
+    with open(path) as res_file:
+        results = json.load(res_file)
+
+    return results
+
 def create_res_file():
     path = Path('data/res.json')
     if not os.path.isfile(path):
