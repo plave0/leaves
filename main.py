@@ -4,6 +4,13 @@ from pathlib import Path
 import data_processing.configuration as config
 import data_processing.recorder as r
 import classification.random_forest as rdf
+##################################
+import cv2
+import image_processing.fex as f
+import image_processing.calc as c
+import numpy as np
+import matplotlib.pyplot as pp
+
 
 class ForestPromt(Cmd):
     prompt = '>> '

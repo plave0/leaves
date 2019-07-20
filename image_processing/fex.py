@@ -23,11 +23,11 @@ def find_thresh(image):
     thresh = morph_adjust(thresh)
     return thresh
 
-def find_cnt(image):
+def find_cnt(image, method=2):
 
     #Find contour
     thr = find_thresh(image)
-    cnt,_ = cv2.findContours(thr, 1, 2)
+    cnt,_ = cv2.findContours(thr, 1,method=method)
 
     #Find the largest cnt
     max_len_index = 0
@@ -167,6 +167,20 @@ def find_encl(image, keep_original=False):
         
         #Returns the image of the circ, the cnt, and the circle parameter
         return new_img, hull, (center, radius)
+
+def find_edge_points(image, n_points):
+    cnt_image, cnt = find_cnt(image,method=1)
+
+    distance = len(cnt)//n_points
+
+    points = []
+    for i in range(n_points):
+        points.append(cnt[i*distance][0])
+
+    for point in points:
+        cv2.circle(cnt_image, tuple(point),5,(0,0,255),-1)
+
+    return cnt_image, points
 
 def resize_image(image, factor):
     '''Returns the resized image.

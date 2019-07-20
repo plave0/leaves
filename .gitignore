@@ -109,3 +109,5 @@ data/forests/*
 # json files
 data/*.json
 
+# sampoles 
+samples/*

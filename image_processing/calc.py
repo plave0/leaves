@@ -188,6 +188,35 @@ def calc_encl_circumference(image):
     circ = cv2.countNonZero(cnt)
     return circ
 
+def calc_avg_midpoint_distance(image):
+    _,rect,_ = f.find_rect(image)
+    center = rect[0]
+
+    _,edge_points = f.find_edge_points(image,50)
+
+    distances = []
+
+    longside = 0
+    height = rect[1][0]
+    width = rect[1][1]
+    if height>=width:
+        longside = height
+    elif width>height:
+        longside = width
+    
+    for point in edge_points:
+        distance = sqrt(pow(point[0]-center[0],2)+pow(point[1]-center[1],2))
+        distances.append(longside/distance)
+
+    '''
+    arr = np.arange(len(distances))
+    pp.plot(arr, distances)
+    pp.show()
+    '''
+
+    return distances
+    #return sum(distances)/len(distances)
+
 def calc_all(image):
     '''Calculate all the features.'''
     
