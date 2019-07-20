@@ -45,9 +45,9 @@ def calc_hw_ratio(image):
 
     #Returns ratio
     if height>=width:
-        return height/width
+        return height/width, "visina"
     elif width>height:
-        return width/height
+        return width/height, "sirina"
 
 def calc_simetry(image):
     '''Calculates leaf simerty.'''

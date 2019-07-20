@@ -39,7 +39,8 @@ def create_dataset():
         i = file[0:4] #Get file name
 
         #Read all the features and place them in the dict
-        data['hw_ratio'].append(c.calc_hw_ratio(img))
+        data['hw_ratio'].append(c.calc_hw_ratio(img)[0])
+        data['shape'].append(c.calc_hw_ratio(img)[1])
         data['simetry'].append(c.calc_simetry(img))
         data['circularity'].append(c.calc_circularity(img))
         data['rectangularity'].append(c.calc_rectangularity(img))
