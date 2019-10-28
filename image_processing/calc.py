@@ -217,6 +217,10 @@ def calc_avg_midpoint_distance(image):
     return distances
     #return sum(distances)/len(distances)
 
+def calc_check_convexity(image):
+    _,cnt = f.find_cnt(image)
+    return cv2.isContourConvex(cnt)
+
 def calc_all(image):
     '''Calculate all the features.'''
     

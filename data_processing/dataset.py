@@ -1,10 +1,12 @@
 import sys
-import pandas
+import pandas as pd
+import numpy as np
 import cv2
 import os
 from pathlib import Path
 from tqdm import tqdm
 import image_processing.calc as c
+import matplotlib.pyplot as plt
 
 
 def create_dataset():
@@ -22,6 +24,7 @@ def create_dataset():
     data['ch_ratio'] = []
     data['cw_ratio'] = []
     data['center_distance_ratio'] = []
+    data['distance_avg'] = []
     data['label'] = []
     #data['image'] = []
 
@@ -40,7 +43,6 @@ def create_dataset():
 
         #Read all the features and place them in the dict
         data['hw_ratio'].append(c.calc_hw_ratio(img)[0])
-        data['shape'].append(c.calc_hw_ratio(img)[1])
         data['simetry'].append(c.calc_simetry(img))
         data['circularity'].append(c.calc_circularity(img))
         data['rectangularity'].append(c.calc_rectangularity(img))
@@ -49,15 +51,60 @@ def create_dataset():
         data['ch_ratio'].append(c.calc_ch_ratio(img))
         data['cw_ratio'].append(c.calc_cw_ratio(img))
         data['center_distance_ratio'].append(c.calc_center_distance_ratio(img))
+        data['distance_avg'].append(np.mean(c.calc_avg_midpoint_distance(img)))
         data['label'].append(get_label(int(i)))
         #data['image'].append(i)
     
 
     #Create a pandas Dataframe from the dict and write it into a .csv file
-    df = pandas.DataFrame(data)
+    df = pd.DataFrame(data)
     new_file = Path('dataset.csv').absolute()
     exported_csv = df.to_csv(new_file,index=False)
     
+def plot_dataset(dataset_name):
+    dataset = pd.read_csv(Path('data_processing/' + dataset_name + '.csv').absolute())
+    dataset = dataset.sort_values(by=['label'])
+    column_names = dataset.columns
+    for name in column_names:
+        plt.xlabel('Broj Lista')
+        if name.strip() == 'hw_ratio':
+            plt.title('Odnos širine i visine')
+            plt.ylabel('Odnos')
+        elif name.strip() == 'simetry':
+            plt.title('Simetrija lista')
+            plt.ylabel('Odnos')
+        elif name.strip() == 'circularity':
+            plt.title('Sličnost sa krugom')
+            plt.ylabel('Procenat sličnosti')
+        elif name.strip() == 'rectangularity':
+            plt.title('Sličnost sa pravougaonikom')
+            plt.ylabel('Procenat sličnosti')
+        elif name.strip() == 'ca_ratio':
+            plt.title('Odnos obima opisanog kruga i površine lista')
+            plt.ylabel('Odnos')
+        elif name.strip() == 'cc_ratio':
+            plt.title('Odnos obima opisanog kruga i obima lista')
+            plt.ylabel('Odnos')
+        elif name.strip() == 'ch_ratio':
+            plt.title('Odnos obima opisanog kruga i visine lista')
+            plt.ylabel('Odnos')
+        elif name.strip() == 'cw_ratio':
+            plt.title('Odnos obima opisanog kruga i širine lista')
+            plt.ylabel('Odnos')
+        elif name.strip() == 'center_distance_ratio':
+            plt.title('Faktor centra')
+            plt.ylabel('Faktor')
+        elif name.strip() == 'distance_avg':
+            plt.title('Faktor oblika')
+            plt.ylabel('Faktor')
+        else:
+            plt.title(name)
+            plt.ylabel(name)
+
+
+        plt.plot(range(len(dataset[name].values)),dataset[name].values)
+        plt.show()
+        
 
 def get_label(i):
     '''Get leaf label based on the image number.'''

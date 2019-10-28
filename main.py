@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import data_processing.configuration as config
 import data_processing.recorder as r
+import data_processing.dataset as ds
 import classification.random_forest as rdf
 ##################################
 import cv2
@@ -48,6 +49,9 @@ class ForestPromt(Cmd):
     
     def do_createres(self, inp):
         r.create_res_file()
+
+    def do_plot(self, inp):
+        ds.plot_dataset(inp)
     
     def do_clear(self, inp):
        clear = lambda: os.system('clear')
