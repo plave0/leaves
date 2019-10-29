@@ -122,7 +122,7 @@ def print_forest(forest:Forest):
         dt.print_tree(tree)
 
 def save_forest(forest,forest_name,dataset):
-    '''Saves the builts forest.'''
+    '''Saves the built forest.'''
     json_tree = s.serialize_forest(forest)
     with open(Path('data/forests/'+forest_name+'.json'),'w+') as forest_file:
         json.dump(json_tree,forest_file,indent=4)
@@ -133,3 +133,10 @@ def save_forest(forest,forest_name,dataset):
                 forest_name,
                 dataset)
 
+def open_forest(forest_name):
+    '''Reads a forest form a json file and creates a retursn the Forest object.'''
+    with open(Path('data/forests/'+forest_name+'.json'),'r+') as forest_file:
+        json_tree = json.load(forest_file)
+
+    forest = s.deserialize_forest(json_tree)
+    print_forest(forest)

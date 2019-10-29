@@ -7,7 +7,7 @@ import json
 import fastnumbers as fn
 import math
 
-DATASET_HEADERS= ['color','diameter','wight','label']
+DATASET_HEADERS= ['hw_ratio','circularity','rectangularity','ca_ratio;','cc_ratio','ch_ratio','cw_ratio','center_distance_ratio','label']
 
 class Question:
     def __init__(self, column, value):
