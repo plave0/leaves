@@ -1,0 +1,23 @@
+{
+    "lemon": [
+        "lime"
+    ],
+    "grape": [
+        "grape",
+        "grape"
+    ],
+    "apple": [
+        "apple"
+    ],
+    "orange": [
+        "orange",
+        "orange"
+    ],
+    "lime": [
+        "lime"
+    ],
+    "mango": [
+        "orange",
+        "orange"
+    ]
+}

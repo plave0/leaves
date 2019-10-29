@@ -62,9 +62,10 @@ def build_forest(forest_name):
         It return the tree and the error estimate through the outputt parameter.'''
         
         #Creating the tree
-        btset, out = buil_bootstrapped_dataset(rowss)
-        tree = dt.build_tree(np.array(btset.values),factorr,[])
+        tree = dt.build_tree(np.array(rowss),factorr,[])
 
+
+        '''
         #Find all predictions
         predictions = {}
         for row in out.values:
@@ -85,12 +86,14 @@ def build_forest(forest_name):
             freq_counter=Counter(predictions[key])
             predictions[key] = freq_counter.most_common(1)[0][0]
             error_estimates.append(int(key==predictions[key]))
-
-        outputt.put((tree,error_estimates))
+        '''
+        outputt.put((tree))
     ######################################################################  
 
     configuration = config.load_config()
     rows = pd.read_csv(Path('data/datasets',configuration['dataset']))
+    
+    btset, out = buil_bootstrapped_dataset(rows)
 
     #Create the forest
     forest = Forest()
@@ -101,7 +104,7 @@ def build_forest(forest_name):
     for i in range(int(configuration['number_of_trees']/configuration['cores_to_use'])): 
         threads = []
         for _ in range(int(configuration['cores_to_use'])):
-            t = Process(target=build, args=(output,rows,forest.factor))
+            t = Process(target=build, args=(output,btset,forest.factor))
             t.start()
             threads.append(t)
         for t in threads:
@@ -110,10 +113,27 @@ def build_forest(forest_name):
         #Geting the results and putting them in the forest object
         for _ in threads:
             result = output.get()
-            forest.trees.append(result[0])
+            forest.trees.append(result)
+            '''
             for ee in result[1]:
-                forest.oob_error_estimates.append(ee)
+                forest.oob_error_estimates.append(ee'''
 
+    predictions = {}
+    for row in out.values:
+        _, pred = forest.check_row(row)
+        out_label = row[-1]
+
+        if out_label not in predictions.keys():
+            predictions[out_label] = []
+        
+        predictions[out_label].append(pred)
+
+    for key in predictions.keys():
+            freq_counter=Counter(predictions[key])
+            predictions[key] = freq_counter.most_common(1)[0][0]
+            forest.oob_error_estimates.append(int(key==predictions[key]))
+
+    save_predictions(predictions, forest_name)
     save_forest(forest,forest_name,configuration['dataset'])    
 
 def print_forest(forest:Forest):
@@ -140,3 +160,8 @@ def open_forest(forest_name):
 
     forest = s.deserialize_forest(json_tree)
     print_forest(forest)
+
+def save_predictions(predictions, forest_name):
+    '''Saves dictionary of predictions to json file.'''
+    with open(Path('data/predictions/'+forest_name+'.json'),'w+') as forest_file:
+        json.dump(predictions,forest_file,indent=4)

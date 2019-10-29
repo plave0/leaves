@@ -58,6 +58,6 @@ class ForestPromt(Cmd):
        clear()
 
 if __name__ == '__main__':  
-    rdf.open_forest('forest001')
-    #promt = ForestPromt()
-    #promt.cmdloop()
+    #rdf.open_forest('forest001')
+    promt = ForestPromt()
+    promt.cmdloop()
