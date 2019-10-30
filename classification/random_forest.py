@@ -129,8 +129,8 @@ def build_forest(forest_name):
         predictions[out_label].append(pred)
 
     for key in predictions.keys():
-        for predictio in predictions[key]:
-            forest.oob_error_estimates.append(int(key==predictions[key]))
+        for prediction in predictions[key]:
+            forest.oob_error_estimates.append(int(prediction==key))
 
     save_predictions(predictions, forest_name)
     save_forest(forest,forest_name,configuration['dataset'])    
