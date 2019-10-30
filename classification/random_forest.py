@@ -129,8 +129,7 @@ def build_forest(forest_name):
         predictions[out_label].append(pred)
 
     for key in predictions.keys():
-            freq_counter=Counter(predictions[key])
-            predictions[key] = freq_counter.most_common(1)[0][0]
+        for predictio in predictions[key]:
             forest.oob_error_estimates.append(int(key==predictions[key]))
 
     save_predictions(predictions, forest_name)
