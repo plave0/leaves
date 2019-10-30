@@ -53,7 +53,7 @@ def buil_bootstrapped_dataset(rows):
     return df_bootstrapped, diff_df # Return the new datasets
 
 
-def build_forest(forest_name):
+def build_forest(forest_name, dataset_name, factor, number_of_trees, cores_to_use):
     '''Starts the processes that create the trees of the forest.'''
 
     ######################################################################
@@ -91,19 +91,19 @@ def build_forest(forest_name):
     ######################################################################  
 
     configuration = config.load_config()
-    rows = pd.read_csv(Path('data/datasets',configuration['dataset']))
+    rows = pd.read_csv(Path('data/datasets',dataset_name))
     
     btset, out = buil_bootstrapped_dataset(rows)
 
     #Create the forest
     forest = Forest()
-    forest.factor = configuration['factor']
+    forest.factor = factor
 
     #Starting the processes
     output = Queue() #Queue that will be used to store the outputs of all the processes
-    for i in range(int(configuration['number_of_trees']/configuration['cores_to_use'])): 
+    for i in range(int(number_of_trees/cores_to_use)): 
         threads = []
-        for _ in range(int(configuration['cores_to_use'])):
+        for _ in range(int(cores_to_use)):
             t = Process(target=build, args=(output,btset,forest.factor))
             t.start()
             threads.append(t)
@@ -133,7 +133,7 @@ def build_forest(forest_name):
             forest.oob_error_estimates.append(int(prediction==key))
 
     save_predictions(predictions, forest_name)
-    save_forest(forest,forest_name,configuration['dataset'])    
+    save_forest(forest,forest_name,dataset_name)    
 
 def print_forest(forest:Forest):
     '''Forest display'''

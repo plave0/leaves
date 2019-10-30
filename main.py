@@ -34,15 +34,31 @@ class ForestPromt(Cmd):
     
     def do_editconf(self, inp):
         inp = inp.split()
-        if inp[0] in ['cores_to_use',"number_of_trees","factor"]:
+        if inp[0] == 'cores_to_use':
             config.change_config(inp[0],int(inp[1]))
         elif inp[0] == "dataset":
             config.change_config(inp[0],inp[1])
+        elif inp[0] in ["number_of_trees","factor"]:
+            args = []
+            for i in range(1, len(inp)):
+                args.append(int(inp[i]))
+            config.change_config(inp[0], args)
         else:
             print("Config doesn't exits.")
 
     def do_rdf(self, inp):
-        rdf.build_forest(inp)
+        configuration = config.load_config()
+        dataset = configuration['dataset']
+        factor = configuration['factor']
+        number_of_trees = configuration['number_of_trees']
+        corest_to_use = configuration['cores_to_use']
+        
+        i = 0
+        for numb in number_of_trees:
+            for fact in factor:
+                forest_name = 'forest-' + str(i) + '-' + str(fact) + '-' + str(numb)
+                rdf.build_forest(forest_name,dataset, fact, numb, corest_to_use)
+                i += 1
 
     def do_createconfig(self, inp):
         config.create_config_file()
