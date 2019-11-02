@@ -102,6 +102,7 @@ def build_forest(forest_name, dataset_name, factor, number_of_trees, cores_to_us
     #Starting the processes
     output = Queue() #Queue that will be used to store the outputs of all the processes
     for i in range(int(number_of_trees/cores_to_use)): 
+        print(str(i) + "/" + str(int(number_of_trees/cores_to_use)))
         threads = []
         for _ in range(int(cores_to_use)):
             t = Process(target=build, args=(output,btset,forest.factor))
